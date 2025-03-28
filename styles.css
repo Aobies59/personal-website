@@ -163,6 +163,12 @@ body {
     }
 }
 
+.window-active {
+    .title {
+        background-color: var(--blue);
+    }
+}
+
 .window-big {
     width: 500px;
     height: 500px;

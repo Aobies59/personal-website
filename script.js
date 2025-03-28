@@ -46,6 +46,8 @@ desktop.addEventListener("pointerdown", (event) => {
   desktopSelector.style.width = 0;
   desktopSelector.style.height = 0;
   desktopSelector.style.display = "flex";
+
+  deHighlightWindow();
 });
 desktop.addEventListener("pointerleave", () => {
   desktopSelector.style.display = "none";
@@ -73,7 +75,10 @@ closeButtons.forEach((currButton) => {
 let highlightedWindow = null;
 let previouslyHighlightedWindow = null;
 let highlightedWindowFooterButton = null;
+const highlightedWindowClassName = "window-active";
 function highlightWindow(window) {
+  window.classList.add(highlightedWindowClassName);
+  window.style.zIndex = 3;
   if (highlightedWindowFooterButton != null) {
     highlightedWindowFooterButton.classList.remove("active");
   }
@@ -91,15 +96,19 @@ function highlightWindow(window) {
     if (previouslyHighlightedWindow != null) {
       previouslyHighlightedWindow.style.zIndex = 1;
     }
-    highlightedWindow
-      .getElementsByClassName("title")[0]
-      .classList.remove("title-active");
+    highlightedWindow.classList.remove(highlightedWindowClassName);
     highlightedWindow.style.zIndex = 2;
     previouslyHighlightedWindow = highlightedWindow;
   }
-  window.getElementsByClassName("title")[0].classList.add("title-active");
-  window.style.zIndex = 3;
   highlightedWindow = window;
+}
+function deHighlightWindow() {
+  if (highlightedWindow != null) {
+    highlightedWindow.classList.remove("window-active");
+    if (highlightedWindowFooterButton != null) {
+      highlightedWindowFooterButton.classList.remove("active");
+    }
+  }
 }
 
 // select windows when clicking on title bar
