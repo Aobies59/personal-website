@@ -1,42 +1,69 @@
 const windowTitles = Array.from(document.getElementsByClassName("title"));
-const footerButtons = Array.from(
-  document.getElementsByClassName("footer_button"),
-);
+const footer = document.querySelector("footer");
+let footerButtons = Array.from(footer.querySelectorAll("div"));
 const closeButtons = Array.from(document.getElementsByClassName("title_close"));
+const desktop = document.getElementById("desktop");
+
+function updateFooterButtonsList() {
+  footerButtons = Array.from(footer.querySelectorAll("div"));
+}
 
 // desktop selector
-const desktop = document.getElementById("desktop");
 const desktopSelector = document.createElement("div");
 desktopSelector.id = "selector";
 desktop.appendChild(desktopSelector);
 let initialSelectorPosition = { x: 0, y: 0 };
+function removeDesktopSelector() {
+  desktopSelector.style.display = "none";
+}
+
 desktop.addEventListener("pointerdown", (event) => {
   initialSelectorPosition.x = event.clientX;
   initialSelectorPosition.y = event.clientY;
   desktopSelector.style.left = event.clientX + "px";
-  desktopSelector.style.top = event.clientY + "px";
+  desktopSelector.style.top = event.clientY + "py";
   desktopSelector.style.width = 0;
   desktopSelector.style.height = 0;
   desktopSelector.style.display = "flex";
 });
-desktop.addEventListener("pointerleave", () => {
-  desktopSelector.style.display = "none";
-});
+desktop.addEventListener("pointerleave", removeDesktopSelector);
 
-// start bar buttons
-const footer = document.querySelector("footer");
+// window close buttons
+function closeWindow(window) {
+  for (let i = 0; i < footerButtons.length; i++) {
+    const currButton = footerButtons[i];
+    if (currButton.dataset.window == window.id) {
+      currButton.remove();
+      updateFooterButtonsList();
+      break;
+    }
+  }
+  window.remove();
+}
 closeButtons.forEach((currButton) => {
   currButton.addEventListener("click", () => {
-    const window = currButton.parentNode.parentNode;
-    const footerButtons = Array.from(footer.querySelectorAll("div"));
-    for (let i = 0; i < footerButtons.length; i++) {
-      const currButton = footerButtons[i];
-      if (currButton.dataset.window == window.id) {
-        currButton.remove();
-        break;
-      }
-    }
-    window.remove();
+    closeWindow(currButton.parentNode.parentNode);
+  });
+});
+
+// click start menu buttons
+let clickedButton = null;
+const clickedButtonClassName = "clicked";
+function selectStartMenuButton(button) {
+  if (clickedButton != null)
+    clickedButton.classList.remove(clickedButtonClassName);
+  if (button == clickedButton) {
+    clickedButton = null;
+  } else {
+    button.classList.add(clickedButtonClassName);
+    clickedButton = button;
+  }
+}
+footerButtons = Array.from(footer.querySelectorAll("div"));
+footerButtons.forEach((currButton) => {
+  currButton.addEventListener("pointerdown", (event) => {
+    selectStartMenuButton(currButton);
+    event.stopPropagation();
   });
 });
 
@@ -44,39 +71,30 @@ closeButtons.forEach((currButton) => {
 // create start menu buttons for each window
 let selectedWindow = null;
 let previouslySelectedWindow = null;
-windowTitles.forEach((currTitle) => {
-  const currWindow = currTitle.parentNode;
+const startMenuFiller = document.getElementById("filler");
+function createStartMenuButton(windowId) {
   const footerButton = document.createElement("div");
   footerButton.classList.add("footer_button", "bordered");
-  footerButton.dataset.window = currWindow.id;
-  footerButton.innerHTML = currWindow.id;
-  footer.insertBefore(footerButton, document.getElementById("filler"));
+  footerButton.dataset.window = windowId;
+  footerButton.innerHTML = windowId;
+  footer.insertBefore(footerButton, startMenuFiller);
+}
+function selectWindow(window) {
+  selectedWindow = window;
+  selectedWindow.style.zIndex = 3;
+}
+windowTitles.forEach((currTitle) => {
+  const currWindow = currTitle.parentNode;
+  createStartMenuButton(currWindow.id);
+  updateFooterButtonsList();
 
   currTitle.addEventListener("pointerdown", () => {
-    selectedWindow = currWindow;
-    selectedWindow.style.zIndex = 3;
-  });
-});
-
-// click start menu buttons
-let clickedButton = null;
-const clickedButtonClassName = "clicked";
-footerButtons.forEach((currButton) => {
-  currButton.addEventListener("pointerdown", (event) => {
-    currButton.classList.remove(clickedButtonClassName);
-    if (currButton != clickedButton) {
-      clickedButton = currButton;
-      clickedButton.classList.add(clickedButtonClassName);
-    } else {
-      clickedButton = null;
-    }
-
-    event.stopPropagation();
+    selectWindow(currWindow);
   });
 });
 
 // deselect window when lifting pointer
-document.addEventListener("pointerup", () => {
+function deselectWindow() {
   if (selectedWindow != null) {
     selectedWindow.style.zIndex = 2;
     if (previouslySelectedWindow != null) {
@@ -86,18 +104,22 @@ document.addEventListener("pointerup", () => {
   }
   selectedWindow = null;
   desktopSelector.style.display = "none";
-});
+}
+document.addEventListener("pointerup", deselectWindow);
 
 // deselect clicked start menu button when clicking anywhere else
-document.addEventListener("pointerdown", () => {
+function deselectStartMenuButton() {
   if (clickedButton != null) {
     clickedButton.classList.remove(clickedButtonClassName);
     clickedButton = null;
   }
+}
+document.addEventListener("pointerdown", () => {
+  deselectStartMenuButton();
 });
 
-// drag and drop windows
-// desktop selector
+// move selected window
+// change desktop selector size
 let previousPointerPosition = null;
 document.addEventListener("pointermove", (event) => {
   if (previousPointerPosition == null) {
