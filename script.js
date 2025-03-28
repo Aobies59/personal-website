@@ -4,9 +4,34 @@ let footerButtons = Array.from(footer.querySelectorAll("div"));
 const closeButtons = Array.from(document.getElementsByClassName("title_close"));
 const desktop = document.getElementById("desktop");
 
+// click start menu buttons
+let clickedButton = null;
+const clickedButtonClassName = "clicked";
+function selectStartMenuButton(button) {
+  const window = document.getElementById(button.dataset.window);
+  if (window != null) {
+    highlightWindow(window);
+  }
+  if (clickedButton != null)
+    clickedButton.classList.remove(clickedButtonClassName);
+  if (button == clickedButton) {
+    clickedButton = null;
+  } else {
+    button.classList.add(clickedButtonClassName);
+    clickedButton = button;
+  }
+}
+function addClickingFunctionality(button) {
+  button.addEventListener("pointerdown", (event) => {
+    selectStartMenuButton(button);
+    event.stopPropagation();
+  });
+}
 function updateFooterButtonsList() {
   footerButtons = Array.from(footer.querySelectorAll("div"));
 }
+updateFooterButtonsList();
+footerButtons.forEach((currButton) => addClickingFunctionality(currButton));
 
 // desktop selector
 const desktopSelector = document.createElement("div");
@@ -46,28 +71,22 @@ closeButtons.forEach((currButton) => {
   });
 });
 
-// click start menu buttons
-let clickedButton = null;
-const clickedButtonClassName = "clicked";
-function selectStartMenuButton(button) {
-  if (clickedButton != null)
-    clickedButton.classList.remove(clickedButtonClassName);
-  if (button == clickedButton) {
-    clickedButton = null;
-  } else {
-    button.classList.add(clickedButtonClassName);
-    clickedButton = button;
+// highlight windows
+let highlightedWindow = null;
+let previouslyHighlightedWindow = null;
+function highlightWindow(window) {
+  if (highlightedWindow != null) {
+    if (previouslyHighlightedWindow != null) {
+      previouslyHighlightedWindow.style.zIndex = 1;
+    }
+    highlightedWindow.style.zIndex = 2;
+    previouslyHighlightedWindow = highlightedWindow;
   }
+  window.style.zIndex = 3;
+  highlightedWindow = window;
 }
-footerButtons = Array.from(footer.querySelectorAll("div"));
-footerButtons.forEach((currButton) => {
-  currButton.addEventListener("pointerdown", (event) => {
-    selectStartMenuButton(currButton);
-    event.stopPropagation();
-  });
-});
 
-// windows drag and drop
+// select windows when clicking on title bar
 // create start menu buttons for each window
 let selectedWindow = null;
 let previouslySelectedWindow = null;
@@ -77,11 +96,12 @@ function createStartMenuButton(windowId) {
   footerButton.classList.add("footer_button", "bordered");
   footerButton.dataset.window = windowId;
   footerButton.innerHTML = windowId;
+  addClickingFunctionality(footerButton);
   footer.insertBefore(footerButton, startMenuFiller);
 }
 function selectWindow(window) {
   selectedWindow = window;
-  selectedWindow.style.zIndex = 3;
+  highlightWindow(window);
 }
 windowTitles.forEach((currTitle) => {
   const currWindow = currTitle.parentNode;
@@ -94,18 +114,10 @@ windowTitles.forEach((currTitle) => {
 });
 
 // deselect window when lifting pointer
-function deselectWindow() {
-  if (selectedWindow != null) {
-    selectedWindow.style.zIndex = 2;
-    if (previouslySelectedWindow != null) {
-      previouslySelectedWindow.style.zIndex = 1;
-    }
-    previouslySelectedWindow = selectedWindow;
-  }
+document.addEventListener("pointerup", () => {
   selectedWindow = null;
   desktopSelector.style.display = "none";
-}
-document.addEventListener("pointerup", deselectWindow);
+});
 
 // deselect clicked start menu button when clicking anywhere else
 function deselectStartMenuButton() {
@@ -119,7 +131,7 @@ document.addEventListener("pointerdown", () => {
 });
 
 // move selected window
-// change desktop selector size
+// drag desktop selector
 let previousPointerPosition = null;
 document.addEventListener("pointermove", (event) => {
   if (previousPointerPosition == null) {
@@ -165,6 +177,7 @@ document.addEventListener("pointermove", (event) => {
   previousPointerPosition = { x: event.clientX, y: event.clientY };
 });
 
+// update timer
 let timerSeconds = 0;
 let timerMinutes = 0;
 const maxTimerValue = 60;
@@ -191,7 +204,7 @@ setInterval(() => {
   minutesContainer.innerHTML = minutesString;
 }, 1000);
 
-// clock
+// update clock
 const clockHoursContainer = document.getElementById("clock_hours");
 const clockMinutesContainer = document.getElementById("clock_minutes");
 const clockAmPmContainer = document.getElementById("clock_ampm");
