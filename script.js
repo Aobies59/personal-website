@@ -4,10 +4,10 @@ let footerButtons = Array.from(footer.querySelectorAll("div"));
 const closeButtons = Array.from(document.getElementsByClassName("title_close"));
 const desktop = document.getElementById("desktop");
 
-// click start menu buttons
+// click start bar buttons
 let clickedButton = null;
 const activeButtonClassName = "active";
-function selectStartMenuButton(button) {
+function selectStartBarButton(button) {
   const window = document.getElementById(button.dataset.window);
   if (window != null) {
     highlightWindow(window);
@@ -23,7 +23,7 @@ function selectStartMenuButton(button) {
 }
 function addClickingFunctionality(button) {
   button.addEventListener("pointerdown", (event) => {
-    selectStartMenuButton(button);
+    selectStartBarButton(button);
     event.stopPropagation();
   });
 }
@@ -112,17 +112,17 @@ function deHighlightWindow() {
 }
 
 // select windows when clicking on title bar
-// create start menu buttons for each window
+// create start bar buttons for each window
 let selectedWindow = null;
 let previouslySelectedWindow = null;
-const startMenuFiller = document.getElementById("filler");
-function createStartMenuButton(windowId) {
+const startBarFiller = document.getElementById("filler");
+function createStartBarButton(windowId) {
   const footerButton = document.createElement("div");
   footerButton.classList.add("footer_button", "bordered");
   footerButton.dataset.window = windowId;
   footerButton.innerHTML = windowId;
   addClickingFunctionality(footerButton);
-  footer.insertBefore(footerButton, startMenuFiller);
+  footer.insertBefore(footerButton, startBarFiller);
 }
 function selectWindow(window) {
   selectedWindow = window;
@@ -130,7 +130,7 @@ function selectWindow(window) {
 }
 windowTitles.forEach((currTitle) => {
   const currWindow = currTitle.parentNode;
-  createStartMenuButton(currWindow.id);
+  createStartBarButton(currWindow.id);
   updateFooterButtonsList();
 
   currTitle.addEventListener("pointerdown", () => {
@@ -148,15 +148,15 @@ document.addEventListener("pointerup", () => {
   desktopSelector.style.display = "none";
 });
 
-// deselect clicked start menu button when clicking anywhere else
-function deselectStartMenuButton() {
+// deselect clicked start bar button when clicking anywhere else
+function deselectStartBarButton() {
   if (clickedButton != null) {
     clickedButton.classList.remove(activeButtonClassName);
     clickedButton = null;
   }
 }
 document.addEventListener("pointerdown", () => {
-  deselectStartMenuButton();
+  deselectStartBarButton();
 });
 
 // move selected window
@@ -264,3 +264,7 @@ function updateClock() {
 }
 setInterval(updateClock, 10000);
 updateClock();
+
+// start button functionality
+const startButton = document.getElementById("start");
+startButton.addEventListener("click", deHighlightWindow);

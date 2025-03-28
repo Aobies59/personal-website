@@ -59,6 +59,48 @@ body {
     z-index: 1;
 }
 
+#startMenu {
+    /*display: none;*/
+
+    position: absolute;
+    bottom: calc(var(--footer-height) - 1px);
+    left: 5px;
+    width: 250px;
+    height: 350px;
+    background-color: var(--light-grey);
+
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 20% max-content;
+
+    * {
+        grid-row: 1;
+    }
+
+    #startMenu_accent {
+        height: 100%;
+        width: 100%;
+        background-color: var(--dark-grey);
+
+        writing-mode: vertical-lr;
+        color: white;
+        font-size: 30px;
+
+        padding-top: 10px;
+
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        justify-items: start;
+        align-items: center;
+        rotate: 180deg;
+    }
+}
+
+#startMenu .active {
+    display: block;
+}
+
 .bordered {
     border-right: 2px solid black;
     border-bottom: 2px solid black;
