@@ -4,6 +4,7 @@ const footerButtons = Array.from(
 );
 const closeButtons = Array.from(document.getElementsByClassName("title_close"));
 
+// desktop selector
 const desktop = document.getElementById("desktop");
 const desktopSelector = document.createElement("div");
 desktopSelector.id = "selector";
@@ -22,13 +23,13 @@ desktop.addEventListener("pointerleave", () => {
   desktopSelector.style.display = "none";
 });
 
-
+// start bar buttons
 const footer = document.querySelector("footer");
 closeButtons.forEach((currButton) => {
   currButton.addEventListener("click", () => {
     const window = currButton.parentNode.parentNode;
-    const footerButtons = Array.from(footer.querySelectorAll("div"))
-    for (let i=0; i<footerButtons.length; i++) {
+    const footerButtons = Array.from(footer.querySelectorAll("div"));
+    for (let i = 0; i < footerButtons.length; i++) {
       const currButton = footerButtons[i];
       if (currButton.dataset.window == window.id) {
         currButton.remove();
@@ -36,10 +37,11 @@ closeButtons.forEach((currButton) => {
       }
     }
     window.remove();
-
   });
 });
 
+// windows drag and drop
+// create start menu buttons for each window
 let selectedWindow = null;
 let previouslySelectedWindow = null;
 windowTitles.forEach((currTitle) => {
@@ -56,6 +58,7 @@ windowTitles.forEach((currTitle) => {
   });
 });
 
+// click start menu buttons
 let clickedButton = null;
 const clickedButtonClassName = "clicked";
 footerButtons.forEach((currButton) => {
@@ -72,6 +75,7 @@ footerButtons.forEach((currButton) => {
   });
 });
 
+// deselect window when lifting pointer
 document.addEventListener("pointerup", () => {
   if (selectedWindow != null) {
     selectedWindow.style.zIndex = 2;
@@ -84,6 +88,7 @@ document.addEventListener("pointerup", () => {
   desktopSelector.style.display = "none";
 });
 
+// deselect clicked start menu button when clicking anywhere else
 document.addEventListener("pointerdown", () => {
   if (clickedButton != null) {
     clickedButton.classList.remove(clickedButtonClassName);
@@ -91,6 +96,8 @@ document.addEventListener("pointerdown", () => {
   }
 });
 
+// drag and drop windows
+// desktop selector
 let previousPointerPosition = null;
 document.addEventListener("pointermove", (event) => {
   if (previousPointerPosition == null) {
@@ -106,13 +113,10 @@ document.addEventListener("pointermove", (event) => {
     const bodyRect = document.body.getBoundingClientRect();
 
     const windowTop = Math.min(
-      Math.max(
-        windowRect.top + dY,
-        0
-      ),
-      bodyRect.height - 60
-    )
-    const windowLeft = Math.max(windowRect.left + dX,0);
+      Math.max(windowRect.top + dY, 0),
+      bodyRect.height - 60,
+    );
+    const windowLeft = Math.max(windowRect.left + dX, 0);
 
     selectedWindow.style.left = windowLeft + "px";
     selectedWindow.style.top = windowTop + "px";
@@ -144,26 +148,55 @@ let timerMinutes = 0;
 const maxTimerValue = 60;
 const secondsContainer = document.getElementById("timer-seconds");
 const minutesContainer = document.getElementById("timer-minutes");
-setInterval(
-  () => {
-    timerSeconds += 1;
-    if (timerSeconds >= maxTimerValue) {
-      timerMinutes = Math.min(timerMinutes + 1, maxTimerValue);
-      timerSeconds = 0;
-    }
+setInterval(() => {
+  timerSeconds += 1;
+  if (timerSeconds >= maxTimerValue) {
+    timerMinutes = Math.min(timerMinutes + 1, maxTimerValue);
+    timerSeconds = 0;
+  }
 
-    let secondsString = String(timerSeconds);
-    if (timerSeconds < 10) {
-      secondsString = "0" + secondsString;
-    }
+  let secondsString = String(timerSeconds);
+  if (timerSeconds < 10) {
+    secondsString = "0" + secondsString;
+  }
 
-    let minutesString = String(timerMinutes);
-    if (timerMinutes < 10) {
-      minutesString = "0" + minutesString;
-    }
+  let minutesString = String(timerMinutes);
+  if (timerMinutes < 10) {
+    minutesString = "0" + minutesString;
+  }
 
-    secondsContainer.innerHTML = secondsString;
-    minutesContainer.innerHTML = minutesString;
-  },
-  1000
-);
+  secondsContainer.innerHTML = secondsString;
+  minutesContainer.innerHTML = minutesString;
+}, 1000);
+
+// clock
+const clockHoursContainer = document.getElementById("clock_hours");
+const clockMinutesContainer = document.getElementById("clock_minutes");
+const clockAmPmContainer = document.getElementById("clock_ampm");
+function updateClock() {
+  let currDate = new Date();
+  let minutesString = String(currDate.getMinutes());
+  if (minutesString.length < 2) {
+    minutesString = "0" + minutesString;
+  }
+
+  const hours = currDate.getHours();
+  let amPmString;
+  if (hours > 12) {
+    amPmString = "PM";
+    hours -= 12;
+  } else {
+    amPmString = "AM";
+  }
+
+  let hoursString = String(hours);
+  if (hoursString.length < 2) {
+    hoursString = "0" + hoursString;
+  }
+
+  clockHoursContainer.innerHTML = hoursString;
+  clockMinutesContainer.innerHTML = minutesString;
+  clockAmPmContainer.innerHTML = amPmString;
+}
+setTimeout(updateClock(), 60000);
+updateClock();
