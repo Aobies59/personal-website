@@ -198,5 +198,5 @@ function updateClock() {
   clockMinutesContainer.innerHTML = minutesString;
   clockAmPmContainer.innerHTML = amPmString;
 }
-setInterval(updateClock, 60000);
+setInterval(updateClock, 10000);
 updateClock();
