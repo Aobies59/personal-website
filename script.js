@@ -6,18 +6,18 @@ const desktop = document.getElementById("desktop");
 
 // click start menu buttons
 let clickedButton = null;
-const clickedButtonClassName = "clicked";
+const activeButtonClassName = "active";
 function selectStartMenuButton(button) {
   const window = document.getElementById(button.dataset.window);
   if (window != null) {
     highlightWindow(window);
   }
   if (clickedButton != null)
-    clickedButton.classList.remove(clickedButtonClassName);
+    clickedButton.classList.remove(activeButtonClassName);
   if (button == clickedButton) {
     clickedButton = null;
   } else {
-    button.classList.add(clickedButtonClassName);
+    button.classList.add(activeButtonClassName);
     clickedButton = button;
   }
 }
@@ -28,7 +28,7 @@ function addClickingFunctionality(button) {
   });
 }
 function updateFooterButtonsList() {
-  footerButtons = Array.from(footer.querySelectorAll("div"));
+  footerButtons = Array.from(footer.querySelectorAll("div.footer_button"));
 }
 updateFooterButtonsList();
 footerButtons.forEach((currButton) => addClickingFunctionality(currButton));
@@ -38,10 +38,6 @@ const desktopSelector = document.createElement("div");
 desktopSelector.id = "selector";
 desktop.appendChild(desktopSelector);
 let initialSelectorPosition = { x: 0, y: 0 };
-function removeDesktopSelector() {
-  desktopSelector.style.display = "none";
-}
-
 desktop.addEventListener("pointerdown", (event) => {
   initialSelectorPosition.x = event.clientX;
   initialSelectorPosition.y = event.clientY;
@@ -51,7 +47,9 @@ desktop.addEventListener("pointerdown", (event) => {
   desktopSelector.style.height = 0;
   desktopSelector.style.display = "flex";
 });
-desktop.addEventListener("pointerleave", removeDesktopSelector);
+desktop.addEventListener("pointerleave", () => {
+  desktopSelector.style.display = "none";
+});
 
 // window close buttons
 function closeWindow(window) {
@@ -74,14 +72,32 @@ closeButtons.forEach((currButton) => {
 // highlight windows
 let highlightedWindow = null;
 let previouslyHighlightedWindow = null;
+let highlightedWindowFooterButton = null;
 function highlightWindow(window) {
+  if (highlightedWindowFooterButton != null) {
+    highlightedWindowFooterButton.classList.remove("active");
+  }
+  for (let i = 0; i < footerButtons.length; i++) {
+    const currFooterButton = footerButtons[i];
+    if (currFooterButton.dataset.window == window.id) {
+      currFooterButton.classList.add("active");
+      highlightedWindowFooterButton = currFooterButton;
+    }
+  }
+  if (window == highlightedWindow) {
+    return;
+  }
   if (highlightedWindow != null) {
     if (previouslyHighlightedWindow != null) {
       previouslyHighlightedWindow.style.zIndex = 1;
     }
+    highlightedWindow
+      .getElementsByClassName("title")[0]
+      .classList.remove("title-active");
     highlightedWindow.style.zIndex = 2;
     previouslyHighlightedWindow = highlightedWindow;
   }
+  window.getElementsByClassName("title")[0].classList.add("title-active");
   window.style.zIndex = 3;
   highlightedWindow = window;
 }
@@ -111,6 +127,10 @@ windowTitles.forEach((currTitle) => {
   currTitle.addEventListener("pointerdown", () => {
     selectWindow(currWindow);
   });
+
+  currWindow.addEventListener("pointerdown", () => {
+    highlightWindow(currWindow);
+  });
 });
 
 // deselect window when lifting pointer
@@ -122,7 +142,7 @@ document.addEventListener("pointerup", () => {
 // deselect clicked start menu button when clicking anywhere else
 function deselectStartMenuButton() {
   if (clickedButton != null) {
-    clickedButton.classList.remove(clickedButtonClassName);
+    clickedButton.classList.remove(activeButtonClassName);
     clickedButton = null;
   }
 }
@@ -215,7 +235,7 @@ function updateClock() {
     minutesString = "0" + minutesString;
   }
 
-  const hours = currDate.getHours();
+  let hours = currDate.getHours();
   let amPmString;
   if (hours > 12) {
     amPmString = "PM";
