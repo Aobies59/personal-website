@@ -48,9 +48,6 @@ desktop.addEventListener("pointerdown", (event) => {
 
   deHighlightWindow();
 });
-desktop.addEventListener("pointerleave", () => {
-  desktopSelector.style.display = "none";
-});
 
 // window close buttons
 function closeWindow(window) {
@@ -268,3 +265,5 @@ document.addEventListener("pointerdown", () => {
   startMenu.classList.remove("active");
   startButton.classList.remove(activeButtonClassName);
 });
+
+console.log("If you are reading this follow me :)");
