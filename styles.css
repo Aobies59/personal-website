@@ -60,7 +60,7 @@ body {
 }
 
 #startMenu {
-    /*display: none;*/
+    display: none;
 
     position: absolute;
     bottom: calc(var(--footer-height) - 1px);
@@ -69,7 +69,6 @@ body {
     height: 350px;
     background-color: var(--light-grey);
 
-    display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 20% max-content;
 
@@ -97,8 +96,8 @@ body {
     }
 }
 
-#startMenu .active {
-    display: block;
+#startMenu.active {
+    display: grid;
 }
 
 .bordered {
@@ -307,6 +306,8 @@ footer {
     }
 
     #start {
+        cursor: pointer;
+
         user-select: none;
 
         width: min-content;
