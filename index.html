@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Aobies9's world</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div id="desktop"></div>
+
+        <div class="window window-text bordered" id="welcome">
+            <div class="title">
+                Welcome!
+                <div class="title_close bordered">
+                    <span>x</span>
+                </div>
+            </div>
+            <div class="content">
+                <p>
+                    Welcome to my personal website! Here you will find the
+                    random stuff I make when I'm bored. Hope you like it!
+                </p>
+            </div>
+        </div>
+        
+        <div class="window window-big bordered" id="todo">
+            <div class="title">
+                To Do:
+                <div class="title_close bordered">
+                    <span>x</span>
+                </div>
+            </div>
+            <div class="content">
+                - Make the clock in the bottom right actually work<br>
+                - Create scrollable windows (with custom scrollbar)<br>
+                - Make it so you can focus windows using the start bar<br>
+                - Add minimizing/maximing windows<br>
+                - Add icons to the desktop (with the ability to select, click and open them)<br>
+                - Add a portfolio page<br>
+                - Add a resume page<br>
+            </div>
+        </div>
+
+        <div class="window window-small bordered" id="timer">
+            <div class="title">
+                Timer
+                <div class="title_close bordered">
+                    <span>x</span>
+                </div>
+            </div>
+            <div class="content" id="timer-content">
+                <span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer_button bordered" id="start">
+                <img src="assets/windows-icon.png" />
+                <span>Start</span>
+            </div>
+            <div id="filler"></div>
+            <div id="time">
+                22:00 PM
+            </div>
+        </footer>
+        <script src="script.js"></script>
+    </body>
+</html>
