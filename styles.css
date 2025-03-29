@@ -15,12 +15,20 @@ html {
     --dark-grey: rgb(128, 128, 128);
     --blue: rgb(2, 0, 121);
 
-    --checker-gradient: linear-gradient(
+    --white-checker: linear-gradient(
         45deg,
         var(--light-grey) 25%,
         transparent 25%,
         transparent 75%,
         var(--light-grey) 75%
+    );
+
+    --blue-checker: linear-gradient(
+        45deg,
+        var(--blue) 24.9%,
+        rgba(2, 0, 121, 0.4) 24.9%,
+        rgba(2, 0, 121, 0.4) 74.9%,
+        var(--blue) 74.9%
     );
 }
 
@@ -59,6 +67,50 @@ body {
     z-index: 1;
 }
 
+.desktop_icon {
+    width: 50px;
+    height: 60px;
+    position: absolute;
+    
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: max-content, min-content;
+
+    font-weight: 1;
+
+    justify-items: center;
+    align-items: center;
+
+    font-size: 12px;
+
+    img {
+        max-height: 100%;
+    }
+
+    span {
+        color: white;
+        text-align: center;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+}
+
+.desktop_icon.active {
+
+    img {
+        mask-image: var(--blue-checker), var(--blue-checker);
+        mask-position:
+            0 0,
+            1px 1px;
+        mask-size: 2px 2px;
+    }
+
+    span {
+        background-color: var(--blue);
+    }
+
+}
+
 #startMenu {
     display: none;
 
@@ -71,6 +123,8 @@ body {
 
     grid-template-rows: 1fr;
     grid-template-columns: 20% max-content;
+
+    z-index: 6;
 
     * {
         grid-row: 1;
@@ -164,6 +218,8 @@ body {
     background-color: var(--light-grey);
 
     cursor: default;
+
+    z-index: 2;
 
     .title {
         width: 100%;
@@ -298,7 +354,7 @@ footer {
 
     .active {
         background-color: white;
-        background-image: var(--checker-gradient), var(--checker-gradient);
+        background-image: var(--white-checker), var(--white-checker);
         background-position:
             0 0,
             1px 1px;

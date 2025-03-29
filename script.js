@@ -37,6 +37,7 @@ const desktopSelector = document.createElement("div");
 desktopSelector.id = "selector";
 desktop.appendChild(desktopSelector);
 let initialSelectorPosition = { x: 0, y: 0 };
+let usingSelector = false;
 desktop.addEventListener("pointerdown", (event) => {
   initialSelectorPosition.x = event.clientX;
   initialSelectorPosition.y = event.clientY;
@@ -45,6 +46,7 @@ desktop.addEventListener("pointerdown", (event) => {
   desktopSelector.style.width = 0;
   desktopSelector.style.height = 0;
   desktopSelector.style.display = "flex";
+  usingSelector = true;
 
   deHighlightWindow();
 });
@@ -74,7 +76,7 @@ let highlightedWindowFooterButton = null;
 const highlightedWindowClassName = "window-active";
 function highlightWindow(window) {
   window.classList.add(highlightedWindowClassName);
-  window.style.zIndex = 3;
+  window.style.zIndex = 5;
   if (highlightedWindowFooterButton != null) {
     highlightedWindowFooterButton.classList.remove("active");
   }
@@ -90,10 +92,10 @@ function highlightWindow(window) {
   }
   if (highlightedWindow != null) {
     if (previouslyHighlightedWindow != null) {
-      previouslyHighlightedWindow.style.zIndex = 1;
+      previouslyHighlightedWindow.style.zIndex = 2;
     }
     highlightedWindow.classList.remove(highlightedWindowClassName);
-    highlightedWindow.style.zIndex = 2;
+    highlightedWindow.style.zIndex = 3;
     previouslyHighlightedWindow = highlightedWindow;
   }
   highlightedWindow = window;
@@ -141,6 +143,7 @@ windowTitles.forEach((currTitle) => {
 document.addEventListener("pointerup", () => {
   selectedWindow = null;
   desktopSelector.style.display = "none";
+  usingSelector = false;
 });
 
 // move selected window
@@ -248,6 +251,57 @@ function updateClock() {
 }
 setInterval(updateClock, 10000);
 updateClock();
+
+// desktop icons functionality
+function rectsIntersect(rect1, rect2) {
+  return !(
+    rect1.right < rect2.left ||
+    rect1.left > rect2.right ||
+    rect1.bottom < rect2.top ||
+    rect1.top > rect2.bottom
+  )
+}
+let activeIcons = [];
+const desktopIcons = Array.from(document.getElementsByClassName("desktop_icon"));
+const activeIconClassName = "active";
+function addActiveIcon(icon) {
+  icon.classList.add(activeIconClassName);
+  if (!activeIcons.includes(icon)) {
+    activeIcons.push(icon);
+  }
+}
+document.addEventListener("pointermove", () => {
+  if (!usingSelector) {
+    return;
+  }
+  const selectorRect = selector.getBoundingClientRect();
+  desktopIcons.forEach((currIcon) => {
+    const iconRect = currIcon.getBoundingClientRect();
+    if (rectsIntersect(selectorRect, iconRect)) {
+      addActiveIcon(currIcon);
+    } else {
+      activeIcons = activeIcons.filter(icon => icon != currIcon);
+      currIcon.classList.remove(activeIconClassName);
+    }
+  })
+})
+function deselectIcons() {
+  activeIcons.forEach((currIcon) => {
+    currIcon.classList.remove(activeIconClassName);
+  })
+  activeIcons = [];
+}
+desktopIcons.forEach((currIcon) => {
+  currIcon.addEventListener("click", () => {
+    if (activeIcons.includes(currIcon)) {
+      return; // TODO: open the icons page
+    } else {
+      deselectIcons();
+      addActiveIcon(currIcon);
+    }
+  })
+})
+desktop.addEventListener("pointerdown", deselectIcons);
 
 // start button functionality
 const startButton = document.getElementById("start");
