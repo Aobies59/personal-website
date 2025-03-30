@@ -282,7 +282,6 @@ body {
 }
 
 .window-text {
-    width: min-content;
     height: min-content;
 
     p {
@@ -295,20 +294,6 @@ body {
     }
 }
 
-#welcome {
-    left: 10%;
-    top: 10%;
-}
-
-#todo {
-    left: 40%;
-    top: 30%;
-}
-
-#timer {
-    left: 20%;
-    top: 50%;
-}
 
 /* FOOTER */
 
