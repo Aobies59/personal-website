@@ -2,6 +2,10 @@ const footer = document.querySelector("footer");
 let footerButtons = Array.from(footer.querySelectorAll("div"));
 const desktop = document.getElementById("desktop");
 
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // select window with start bar button
 let clickedButton = null;
 const activeButtonClassName = "active";
@@ -379,8 +383,8 @@ desktopIcons.forEach((currIcon) => {
         const templateWindow = getTemplateElement(currIcon.dataset.window);
         const newWindow = createWindow(
           currIcon.dataset.window,
-          "40%",
-          "20%",
+          templateWindow.dataset.left,
+          templateWindow.dataset.top,
           templateWindow.dataset.title,
           templateWindow.innerHTML,
           "window-" + templateWindow.dataset.windowsize,
