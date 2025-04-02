@@ -281,13 +281,31 @@ function updateClock() {
 setInterval(updateClock, 10000);
 updateClock();
 
-// start button functionality
+// start menu functionality
 const startButton = document.getElementById("start");
 const startMenu = document.getElementById("startMenu");
+const startMenuButtons = Array.from(document.getElementById("startMenu_content").children);
 startButton.addEventListener("pointerdown", (event) => {
   startMenu.classList.toggle("active");
   startButton.classList.toggle(activeButtonClassName);
 });
+function closeStartMenu() {
+  startMenu.classList.remove("active");
+  startButton.classList.remove(activeButtonClassName);
+}
+document.addEventListener("pointerup", (event) => {
+  if (!startMenu.classList.contains("active")) return;
+  const ignoredNodes = [startButton, ...startMenuButtons];
+  let ignore = false;
+  ignoredNodes.forEach((currButton) => {
+    if (currButton == event.target || currButton.contains(event.target)) {
+      ignore = true;
+      return;
+    }
+  });
+  if (ignore) return;
+  closeStartMenu();
+})
 document.addEventListener("pointerdown", (event) => {
   const ignoredNodes = [startMenu, startButton];
   let ignore = false;
@@ -298,15 +316,24 @@ document.addEventListener("pointerdown", (event) => {
     }
   });
   if (ignore) return;
-  startMenu.classList.remove("active");
-  startButton.classList.remove(activeButtonClassName);
+  closeStartMenu();
 });
+startMenuButtons.forEach((currButton) => {
+  currButton.addEventListener("click", closeStartMenu);
+  currButton.addEventListener("pointerup", closeStartMenu);
+})
 const githubButton = document.getElementById("github");
 githubButton.addEventListener("click", () => {
   window.open("https://github.com/Aobies59", "_blank");
 })
+githubButton.addEventListener("pointerup", () => {
+  window.open("https://github.com/Aobies59", "_blank");
+})
 const linkedinButton = document.getElementById("linkedin");
 linkedinButton.addEventListener("click", () => {
+  window.open("https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/", "_blank");
+})
+linkedinButton.addEventListener("pointerup", () => {
   window.open("https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/", "_blank");
 })
 
