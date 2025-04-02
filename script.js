@@ -93,8 +93,9 @@ function highlightWindow(window) {
   if (window == highlightedWindow) {
     return;
   }
+
   if (highlightedWindow != null) {
-    if (previouslyHighlightedWindow != null) {
+    if (previouslyHighlightedWindow != null && previouslyHighlightedWindow != window) {
       previouslyHighlightedWindow.style.zIndex = 2;
     }
     highlightedWindow.classList.remove(highlightedWindowClassName);
@@ -112,12 +113,9 @@ function deHighlightWindow() {
   }
 }
 document.addEventListener("pointerdown", (event) => {
-  ignoreNodes = [
-    highlightedWindow,
-    document.querySelector("div.footer_button.active"),
-  ];
+  const ignoredNodes = [highlightedWindow, ...footerButtons];
   let ignore = false;
-  ignoreNodes.forEach((currNode) => {
+  ignoredNodes.forEach((currNode) => {
     if (currNode == null) return;
     if (currNode == event.target || currNode.contains(event.target)) {
       ignore = true;
@@ -378,7 +376,6 @@ function deselectIcons() {
 desktopIcons.forEach((currIcon) => {
   currIcon.addEventListener("click", () => {
     if (activeIcons.includes(currIcon)) {
-      console.log(desktopWindows);
       if (!desktopWindows[currIcon.dataset.window]) {
         const templateWindow = getTemplateElement(currIcon.dataset.window);
         const newWindow = createWindow(
