@@ -1,6 +1,8 @@
 * {
     box-sizing: border-box;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 html {
@@ -274,6 +276,7 @@ body {
         height: 20px;
 
         user-select: none;
+        -webkit-user-select: none;
 
         background-color: var(--dark-grey);
         color: var(--light-grey);
@@ -300,6 +303,7 @@ body {
     .content {
         padding: 5px;
         user-select: text;
+        -webkit-user-select: text;
         height: calc(100% - 20px);
     }
 }
@@ -393,6 +397,7 @@ footer {
         cursor: pointer;
 
         user-select: none;
+        -webkit-user-select: none;
 
         width: min-content;
 
