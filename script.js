@@ -301,6 +301,14 @@ document.addEventListener("pointerdown", (event) => {
   startMenu.classList.remove("active");
   startButton.classList.remove(activeButtonClassName);
 });
+const githubButton = document.getElementById("github");
+githubButton.addEventListener("click", () => {
+  window.open("https://github.com/Aobies59", "_blank");
+})
+const linkedinButton = document.getElementById("linkedin");
+linkedinButton.addEventListener("click", () => {
+  window.open("https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/", "_blank");
+})
 
 createWindow(
   "welcome",
@@ -418,6 +426,8 @@ setInterval(() => {
   secondsContainer = document.getElementById("timer-seconds");
   minutesContainer = document.getElementById("timer-minutes");
   if (secondsContainer == null || minutesContainer == null) {
+    timerSeconds = 0;
+    timerMinutes = 0;
     return;
   }
   timerSeconds += 1;

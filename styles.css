@@ -125,7 +125,7 @@ body {
     background-color: var(--light-grey);
 
     grid-template-rows: 1fr;
-    grid-template-columns: 20% max-content;
+    grid-template-columns: 20% 80%;
 
     z-index: 6;
 
@@ -150,6 +150,47 @@ body {
         justify-items: start;
         align-items: center;
         rotate: 180deg;
+    }
+    
+    #startMenu_content {
+        width: 100%;
+        height: 100%;
+
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: repeat(7, 50px);
+        
+        > * {
+            grid-column: 1;
+            grid-row: auto;
+        }
+
+        div {
+            display: grid;
+            grid-template-rows: 100%;
+            grid-template-columns: 30px auto;
+            align-content: center;
+            align-items: center;
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            gap: 10px;
+
+            > img {
+                max-height: 100%;
+                width: 100%;
+            }
+
+           > *  {
+            grid-row: 1;
+            grid-column: auto;
+           }
+        }
+
+        div:hover {
+            color: white;
+            background-color: var(--blue);
+        }
     }
 }
 
