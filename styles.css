@@ -194,6 +194,10 @@ body {
     }
 }
 
+#timer.red {
+    color: red;
+}
+
 #startMenu.active {
     display: grid;
 }

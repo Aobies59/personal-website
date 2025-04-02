@@ -397,7 +397,6 @@ desktopIcons.forEach((currIcon) => {
         );
         newWindow.dataset.desktopicon = newWindow.id;
         desktopWindows[currIcon.dataset.window] = true;
-        deselectIcons();
       }
     } else {
       deselectIcons();
@@ -419,13 +418,15 @@ document.addEventListener("pointerdown", (event) => {
 
 let timerSeconds = 0;
 let timerMinutes = 0;
+let timerContainer = document.getElementById("timer");
 const maxTimerValue = 60;
 let secondsContainer = document.getElementById("timer-seconds");
 let minutesContainer = document.getElementById("timer-minutes");
 setInterval(() => {
+  timerContainer = document.getElementById("timer");
   secondsContainer = document.getElementById("timer-seconds");
   minutesContainer = document.getElementById("timer-minutes");
-  if (secondsContainer == null || minutesContainer == null) {
+  if (timerContainer == null) {
     timerSeconds = 0;
     timerMinutes = 0;
     return;
@@ -444,6 +445,12 @@ setInterval(() => {
   let minutesString = String(timerMinutes);
   if (timerMinutes < 10) {
     minutesString = "0" + minutesString;
+  }
+
+  if (timerMinutes == maxTimerValue) {
+    secondsContainer.innerHTML = "00";
+    minutesContainer.innerHTML == "60";
+    timerContainer.classList.toggle("red");
   }
 
   secondsContainer.innerHTML = secondsString;
