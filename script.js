@@ -2,6 +2,7 @@ const footer = document.querySelector("footer");
 let footerButtons = Array.from(footer.querySelectorAll("div"));
 const desktop = document.getElementById("desktop");
 
+// select window with start bar button
 let clickedButton = null;
 const activeButtonClassName = "active";
 function selectStartBarButton(button) {
@@ -35,6 +36,14 @@ desktop.appendChild(desktopSelector);
 let initialSelectorPosition = { x: 0, y: 0 };
 let usingSelector = false;
 desktop.addEventListener("pointerdown", (event) => {
+  let ignore = false;
+  desktopIcons.forEach((currIcon) => {
+    if (currIcon == event.target || currIcon.contains(event.target)) {
+      ignore = true;
+      return;
+    }
+  });
+  if (ignore) return;
   initialSelectorPosition.x = event.clientX;
   initialSelectorPosition.y = event.clientY;
   desktopSelector.style.left = event.clientX + "px";
@@ -43,8 +52,6 @@ desktop.addEventListener("pointerdown", (event) => {
   desktopSelector.style.height = 0;
   desktopSelector.style.display = "flex";
   usingSelector = true;
-
-  deHighlightWindow();
 });
 
 function closeWindow(window) {
@@ -55,6 +62,9 @@ function closeWindow(window) {
       updateFooterButtonsList();
       break;
     }
+  }
+  if (window.dataset.desktopicon) {
+    desktopWindows[window.id] = false;
   }
   window.remove();
 }
@@ -97,6 +107,22 @@ function deHighlightWindow() {
     }
   }
 }
+document.addEventListener("pointerdown", (event) => {
+  ignoreNodes = [
+    highlightedWindow,
+    document.querySelector("div.footer_button.active"),
+  ];
+  let ignore = false;
+  ignoreNodes.forEach((currNode) => {
+    if (currNode == null) return;
+    if (currNode == event.target || currNode.contains(event.target)) {
+      ignore = true;
+      return;
+    }
+  });
+  if (ignore) return;
+  deHighlightWindow();
+});
 
 let previouslySelectedWindow = null;
 const startBarFiller = document.getElementById("filler");
@@ -115,11 +141,19 @@ function selectWindow(window) {
   highlightWindow(window);
 }
 
-function createWindow(windowId, left, top, title, content, windowType=null, scrollable=false) {
+function createWindow(
+  windowId,
+  left,
+  top,
+  title,
+  content,
+  windowType = null,
+  scrollable = false,
+) {
   const windowDiv = document.createElement("div");
   windowDiv.classList.add("window", "bordered");
   if (windowType != null) {
-    windowDiv.classList.add(windowType)
+    windowDiv.classList.add(windowType);
   }
   windowDiv.id = windowId;
   windowDiv.style.left = left;
@@ -130,13 +164,13 @@ function createWindow(windowId, left, top, title, content, windowType=null, scro
   titleDiv.innerHTML = title;
   titleDiv.addEventListener("pointerdown", () => {
     selectWindow(windowDiv);
-  })
+  });
   const closeButtonDiv = document.createElement("div");
   closeButtonDiv.classList.add("title_close", "bordered");
   closeButtonDiv.innerHTML = "x";
   closeButtonDiv.addEventListener("click", () => {
     closeWindow(windowDiv);
-  })
+  });
   titleDiv.appendChild(closeButtonDiv);
   windowDiv.appendChild(titleDiv);
 
@@ -150,10 +184,13 @@ function createWindow(windowId, left, top, title, content, windowType=null, scro
 
   windowDiv.addEventListener("pointerdown", () => {
     highlightWindow(windowDiv);
-  })
+  });
 
   document.body.appendChild(windowDiv);
   createStartBarButton(windowId);
+  highlightWindow(windowDiv);
+
+  return windowDiv;
 }
 
 // deselect window when lifting pointer
@@ -242,23 +279,77 @@ function updateClock() {
 setInterval(updateClock, 10000);
 updateClock();
 
+// start button functionality
+const startButton = document.getElementById("start");
+const startMenu = document.getElementById("startMenu");
+startButton.addEventListener("pointerdown", (event) => {
+  startMenu.classList.toggle("active");
+  startButton.classList.toggle(activeButtonClassName);
+});
+document.addEventListener("pointerdown", (event) => {
+  const ignoredNodes = [startMenu, startButton];
+  let ignore = false;
+  ignoredNodes.forEach((currNode) => {
+    if (event.target == currNode || currNode.contains(event.target)) {
+      ignore = true;
+      return;
+    }
+  });
+  if (ignore) return;
+  startMenu.classList.remove("active");
+  startButton.classList.remove(activeButtonClassName);
+});
+
+createWindow(
+  "welcome",
+  "10%",
+  "10%",
+  "Welcome!",
+  "Welcome to my personal website!<br>\
+  Here you will find the random stuff I make when I'm bored.<br>\
+  Hope you like it!",
+  "window-text",
+);
+
 // desktop icons functionality
+const templateElements = Array.from(
+  document.querySelector("template").content.children,
+);
+function getTemplateElement(elementId) {
+  for (let i = 0; i < templateElements.length; i++) {
+    const currTemplateElement = templateElements[i];
+    if (currTemplateElement.id == elementId) {
+      return currTemplateElement;
+    }
+  }
+  return null;
+}
 function rectsIntersect(rect1, rect2) {
   return !(
     rect1.right < rect2.left ||
     rect1.left > rect2.right ||
     rect1.bottom < rect2.top ||
     rect1.top > rect2.bottom
-  )
+  );
 }
 let activeIcons = [];
-const desktopIcons = Array.from(document.getElementsByClassName("desktop_icon"));
+const desktopIcons = Array.from(
+  document.getElementsByClassName("desktop_icon"),
+);
+let desktopWindows = {};
+desktopIcons.forEach((currIcon) => {
+  desktopWindows[currIcon.dataset.window] = false;
+});
 const activeIconClassName = "active";
-function addActiveIcon(icon) {
+function selectIcon(icon) {
   icon.classList.add(activeIconClassName);
   if (!activeIcons.includes(icon)) {
     activeIcons.push(icon);
   }
+}
+function deselectIcon(icon) {
+  icon.classList.remove(activeIconClassName);
+  activeIcons = activeIcons.filter((currIcon) => icon != currIcon);
 }
 document.addEventListener("pointermove", () => {
   if (!usingSelector) {
@@ -268,75 +359,66 @@ document.addEventListener("pointermove", () => {
   desktopIcons.forEach((currIcon) => {
     const iconRect = currIcon.getBoundingClientRect();
     if (rectsIntersect(selectorRect, iconRect)) {
-      addActiveIcon(currIcon);
+      selectIcon(currIcon);
     } else {
-      activeIcons = activeIcons.filter(icon => icon != currIcon);
-      currIcon.classList.remove(activeIconClassName);
+      deselectIcon(currIcon);
     }
-  })
-})
+  });
+});
 function deselectIcons() {
   activeIcons.forEach((currIcon) => {
     currIcon.classList.remove(activeIconClassName);
-  })
+  });
   activeIcons = [];
 }
 desktopIcons.forEach((currIcon) => {
   currIcon.addEventListener("click", () => {
     if (activeIcons.includes(currIcon)) {
-      return; // TODO: open the icons page
+      console.log(desktopWindows);
+      if (!desktopWindows[currIcon.dataset.window]) {
+        const templateWindow = getTemplateElement(currIcon.dataset.window);
+        const newWindow = createWindow(
+          currIcon.dataset.window,
+          "40%",
+          "20%",
+          templateWindow.dataset.title,
+          templateWindow.innerHTML,
+          "window-" + templateWindow.dataset.windowsize,
+          templateWindow.dataset.scrollable == "True",
+        );
+        newWindow.dataset.desktopicon = newWindow.id;
+        desktopWindows[currIcon.dataset.window] = true;
+        deselectIcons();
+      }
     } else {
       deselectIcons();
-      addActiveIcon(currIcon);
+      selectIcon(currIcon);
     }
-  })
-})
-desktop.addEventListener("pointerdown", deselectIcons);
-
-// start button functionality
-const startButton = document.getElementById("start");
-startButton.addEventListener("click", deHighlightWindow);
-const startMenu = document.getElementById("startMenu");
-startButton.addEventListener("pointerdown", (event) => {
-  startMenu.classList.toggle("active");
-  startButton.classList.toggle(activeButtonClassName);
-  event.stopPropagation();
+  });
 });
-startMenu.addEventListener("pointerdown", (event) => {
-  event.stopPropagation();
-});
-document.addEventListener("pointerdown", () => {
-  startMenu.classList.remove("active");
-  startButton.classList.remove(activeButtonClassName);
+document.addEventListener("pointerdown", (event) => {
+  ignore = false;
+  desktopIcons.forEach((currIcon) => {
+    if (event.target == currIcon || currIcon.contains(event.target)) {
+      ignore = true;
+      return;
+    }
+  });
+  if (ignore) return;
+  deselectIcons();
 });
 
-createWindow("welcome", "10%", "10%", "Welcome!",
-  "Welcome to my personal website!<br>\
-  Here you will find the random stuff I make when I'm bored.<br>\
-  Hope you like it!",
-  "window-text");
-
-createWindow("todo", "40%", "30%", "To Do:", 
-  "&check; Make the clock in the bottom right actually work<br />\
-  &check; Create scrollable windows (with custom scrollbar)<br />\
-  &check; Make it so you can focus windows using the start bar<br />\
-  &check; Add some functionality to the start button<br />\
-  - Add some functionality to the start menu<br />\
-  - Add minimizing/maximing windows<br />\
-  - Add icons to the desktop (with the ability to select, click and open them)<br />\
-  - Add a portfolio page<br />\
-  - Add a resume page<br />\
-  - Minesweeper<br />",
-  "window-big", true);
-
-createWindow("timer", "20%", "50%", "Timer",
-  "<span id='timer-minutes'>00</span>:<span id='timer-seconds'>00</span>", "window-small")
 let timerSeconds = 0;
 let timerMinutes = 0;
 const maxTimerValue = 60;
-const secondsContainer = document.getElementById("timer-seconds");
-const minutesContainer = document.getElementById("timer-minutes");
+let secondsContainer = document.getElementById("timer-seconds");
+let minutesContainer = document.getElementById("timer-minutes");
 setInterval(() => {
+  secondsContainer = document.getElementById("timer-seconds");
+  minutesContainer = document.getElementById("timer-minutes");
+  if (secondsContainer == null || minutesContainer == null) {
+    return;
+  }
   timerSeconds += 1;
   if (timerSeconds >= maxTimerValue) {
     timerMinutes = Math.min(timerMinutes + 1, maxTimerValue);

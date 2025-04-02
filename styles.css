@@ -56,6 +56,12 @@ body {
     height: calc(100dvh - var(--footer-height));
 
     background-color: teal;
+
+    padding: 10px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
 }
 
 #selector {
@@ -70,8 +76,7 @@ body {
 .desktop_icon {
     width: 50px;
     height: 60px;
-    position: absolute;
-    
+
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: max-content, min-content;
@@ -96,7 +101,6 @@ body {
 }
 
 .desktop_icon.active {
-
     img {
         mask-image: var(--blue-checker), var(--blue-checker);
         mask-position:
@@ -108,7 +112,6 @@ body {
     span {
         background-color: var(--blue);
     }
-
 }
 
 #startMenu {
@@ -294,7 +297,6 @@ body {
     }
 }
 
-
 /* FOOTER */
 
 footer {
@@ -394,4 +396,8 @@ footer {
         border-top: 2px solid var(--dark-grey);
         border-left: 2px solid var(--dark-grey);
     }
+}
+
+template {
+    display: none;
 }

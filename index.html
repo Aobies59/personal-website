@@ -7,14 +7,15 @@
         <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
-        <div id="desktop"></div>
-        <div class="desktop_icon">
-            <img src="assets/document.ico">
-            <span>Test</span>
-        </div>
-        <div class="desktop_icon">
-            <img src="assets/document.ico">
-            <span>Test</span>
+        <div id="desktop">
+            <div class="desktop_icon" data-window="todo">
+                <img src="assets/document.ico" />
+                <span>To Do</span>
+            </div>
+            <div class="desktop_icon" data-window="timer">
+                <img src="assets/document.ico" />
+                <span>Timer</span>
+            </div>
         </div>
 
         <footer>
@@ -34,6 +35,32 @@
         <div class="bordered" id="startMenu">
             <div id="startMenu_accent">Aobies59's World</div>
         </div>
+
+        <template id="startMenuWindows">
+            <div
+                id="todo"
+                data-windowsize="big"
+                data-scrollable="True"
+                data-title="To Do"
+            >
+                &check; Make the clock in the bottom right actually work<br />
+                &check; Create scrollable windows (with custom scrollbar)<br />
+                &check; Make it so you can focus windows using the start bar<br />
+                &check; Add some functionality to the start button<br />
+                - Add some functionality to the start menu<br />
+                - Add minimizing/maximing windows<br />
+                &check; Add icons to the desktop (with the ability to select,
+                click and open them)<br />
+                - Add a portfolio page<br />
+                - Add a resume page<br />
+                - Minesweeper<br />
+            </div>
+            <div id="timer" data-windowsize="small" data-title="Timer">
+                <span id="timer-minutes">00</span>:<span id="timer-seconds"
+                    >00</span
+                >
+            </div>
+        </template>
 
         <script src="script.js"></script>
     </body>
