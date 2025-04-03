@@ -95,7 +95,10 @@ function highlightWindow(window) {
   }
 
   if (highlightedWindow != null) {
-    if (previouslyHighlightedWindow != null && previouslyHighlightedWindow != window) {
+    if (
+      previouslyHighlightedWindow != null &&
+      previouslyHighlightedWindow != window
+    ) {
       previouslyHighlightedWindow.style.zIndex = 2;
     }
     highlightedWindow.classList.remove(highlightedWindowClassName);
@@ -143,6 +146,10 @@ function selectWindow(window) {
   highlightWindow(window);
 }
 
+const windowFunctions = {
+  timer: startTimer,
+  minesweeper: generateMinesweeper,
+};
 function createWindow(
   windowId,
   left,
@@ -191,6 +198,10 @@ function createWindow(
   document.body.appendChild(windowDiv);
   createStartBarButton(windowId);
   highlightWindow(windowDiv);
+
+  if (windowFunctions[windowId] != null) {
+    windowFunctions[windowId]();
+  }
 
   return windowDiv;
 }
@@ -284,7 +295,9 @@ updateClock();
 // start menu functionality
 const startButton = document.getElementById("start");
 const startMenu = document.getElementById("startMenu");
-const startMenuButtons = Array.from(document.getElementById("startMenu_content").children);
+const startMenuButtons = Array.from(
+  document.getElementById("startMenu_content").children,
+);
 startButton.addEventListener("pointerdown", (event) => {
   startMenu.classList.toggle("active");
   startButton.classList.toggle(activeButtonClassName);
@@ -305,7 +318,7 @@ document.addEventListener("pointerup", (event) => {
   });
   if (ignore) return;
   closeStartMenu();
-})
+});
 document.addEventListener("pointerdown", (event) => {
   const ignoredNodes = [startMenu, startButton];
   let ignore = false;
@@ -321,21 +334,27 @@ document.addEventListener("pointerdown", (event) => {
 startMenuButtons.forEach((currButton) => {
   currButton.addEventListener("click", closeStartMenu);
   currButton.addEventListener("pointerup", closeStartMenu);
-})
+});
 const githubButton = document.getElementById("github");
 githubButton.addEventListener("click", () => {
   window.open("https://github.com/Aobies59", "_blank");
-})
+});
 githubButton.addEventListener("pointerup", () => {
   window.open("https://github.com/Aobies59", "_blank");
-})
+});
 const linkedinButton = document.getElementById("linkedin");
 linkedinButton.addEventListener("click", () => {
-  window.open("https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/", "_blank");
-})
+  window.open(
+    "https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/",
+    "_blank",
+  );
+});
 linkedinButton.addEventListener("pointerup", () => {
-  window.open("https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/", "_blank");
-})
+  window.open(
+    "https://www.linkedin.com/in/%C3%A1lvaro-obies-garc%C3%ADa-b26589235/",
+    "_blank",
+  );
+});
 
 createWindow(
   "welcome",
@@ -443,45 +462,236 @@ document.addEventListener("pointerdown", (event) => {
   deselectIcons();
 });
 
-let timerSeconds = 0;
-let timerMinutes = 0;
-let timerContainer = document.getElementById("timer");
-const maxTimerValue = 60;
-let secondsContainer = document.getElementById("timer-seconds");
-let minutesContainer = document.getElementById("timer-minutes");
-setInterval(() => {
-  timerContainer = document.getElementById("timer");
-  secondsContainer = document.getElementById("timer-seconds");
-  minutesContainer = document.getElementById("timer-minutes");
-  if (timerContainer == null) {
-    timerSeconds = 0;
-    timerMinutes = 0;
+function startTimer() {
+  let timerSeconds = 0;
+  let timerMinutes = 0;
+  const maxTimerValue = 60;
+
+  let timerContainer = document.getElementById("timer");
+  const secondsContainer = document.getElementById("timer-seconds");
+  const minutesContainer = document.getElementById("timer-minutes");
+
+  const timerInterval = setInterval(() => {
+    timerContainer = document.getElementById("timer");
+    if (timerContainer == null) {
+      clearInterval(timerInterval);
+    }
+    timerSeconds += 1;
+    if (timerSeconds >= maxTimerValue) {
+      timerMinutes = Math.min(timerMinutes + 1, maxTimerValue);
+      timerSeconds = 0;
+    }
+
+    let secondsString = String(timerSeconds);
+    if (timerSeconds < 10) {
+      secondsString = "0" + secondsString;
+    }
+
+    let minutesString = String(timerMinutes);
+    if (timerMinutes < 10) {
+      minutesString = "0" + minutesString;
+    }
+
+    if (timerMinutes == maxTimerValue) {
+      secondsContainer.innerHTML = "00";
+      minutesContainer.innerHTML == "60";
+      timerContainer.classList.toggle("red");
+    }
+
+    secondsContainer.innerHTML = secondsString;
+    minutesContainer.innerHTML = minutesString;
+  }, 1000);
+}
+
+// minesweeper
+const minesweeperSize = 9;
+const mineNum = 10;
+let squaresClicked = 0;
+let minesGrid = [];
+let blockGrid = [];
+let mineNumGrid = [];
+let firstClick = true;
+let clearedBlocks = new Set();
+let face = null;
+
+let gameOver = false;
+function loseGame() {
+  face.classList.add("dead");
+  gameOver = true;
+  for (let i = 0; i < minesweeperSize; i++) {
+    for (let j = 0; j < minesweeperSize; j++) {
+      const block = blockGrid[i][j];
+      if (isMine([i, j])) {
+        block.classList.add("minesweeper_bomb");
+        if (block.classList.contains("defused")) {
+          block.classList.remove("defused");
+          block.classList.add("bomb-defused");
+        }
+      }
+    }
+  }
+}
+function winGame() {
+  face.classList.add("victory");
+  gameOver = true;
+  for (let i = 0; i < minesweeperSize; i++) {
+    for (let j = 0; j < minesweeperSize; j++) {
+      const block = blockGrid[i][j];
+      if (isMine([i, j])) {
+        block.classList.add("minesweeper_bomb");
+        block.classList.add("bomb-defused");
+      }
+    }
+  }
+}
+function generateMines(safePosition) {
+  const mines = [JSON.stringify(safePosition)];
+  for (let i = 0; i < mineNum; i++) {
+    let currMine = [
+      randInt(0, minesweeperSize - 1),
+      randInt(0, minesweeperSize - 1),
+    ];
+    while (mines.includes(JSON.stringify(currMine))) {
+      currMine = [
+        randInt(0, minesweeperSize - 1),
+        randInt(0, minesweeperSize - 1),
+      ];
+    }
+    mines.push(JSON.stringify(currMine));
+    minesGrid[currMine[0]][currMine[1]] = true;
+  }
+  generateMineNums();
+}
+function isMine(blockPosition) {
+  return minesGrid[blockPosition[0]][blockPosition[1]];
+}
+function getMinesAroundNum(blockPosition) {
+  let bombNum = 0;
+  for (let i = blockPosition[0] - 1; i <= blockPosition[0] + 1; i++) {
+    if (i < 0 || i >= minesweeperSize) continue;
+    for (let j = blockPosition[1] - 1; j <= blockPosition[1] + 1; j++) {
+      if (j < 0 || j >= minesweeperSize) continue;
+      if ([i, j] == blockPosition) continue;
+      if (minesGrid[i][j]) {
+        bombNum += 1;
+      }
+    }
+  }
+  return bombNum;
+}
+function generateMineNums() {
+  for (let i = 0; i < minesweeperSize; i++) {
+    for (let j = 0; j < minesweeperSize; j++) {
+      mineNumGrid[i][j] = getMinesAroundNum([i, j]);
+    }
+  }
+}
+function checkBlock(blockPosition) {
+  let blocksToCheck = [blockPosition];
+  for (let currBlockPosition of blocksToCheck) {
+    if (currBlockPosition[0] < 0 || currBlockPosition[0] >= minesweeperSize)
+      continue;
+    if (currBlockPosition[1] < 0 || currBlockPosition[1] >= minesweeperSize)
+      continue;
+    if (clearedBlocks.has(JSON.stringify(currBlockPosition))) continue;
+    const block = blockGrid[currBlockPosition[0]][currBlockPosition[1]];
+    block.classList.remove("minesweeper_new");
+    if (isMine(blockPosition)) {
+      block.classList.add("minesweeper_bomb");
+      block.classList.add("exploded");
+      loseGame();
+    } else {
+      clearedBlocks.add(JSON.stringify(currBlockPosition));
+      block.classList.add("minesweeper_empty");
+      const mineNum = mineNumGrid[currBlockPosition[0]][currBlockPosition[1]];
+      if (mineNum == 0) {
+        blocksToCheck.push([currBlockPosition[0] - 1, currBlockPosition[1]]);
+        blocksToCheck.push([currBlockPosition[0] + 1, currBlockPosition[1]]);
+        blocksToCheck.push([currBlockPosition[0], currBlockPosition[1] - 1]);
+        blocksToCheck.push([currBlockPosition[0], currBlockPosition[1] + 1]);
+      } else {
+        block.innerHTML = mineNum;
+      }
+    }
+  }
+}
+function clickBlock(blockPosition) {
+  if (gameOver) return;
+  if (clearedBlocks.has(blockPosition)) return;
+  if (
+    blockGrid[blockPosition[0]][blockPosition[1]].classList.contains("defused")
+  )
     return;
+  if (firstClick) {
+    generateMines(blockPosition);
+    firstClick = false;
   }
-  timerSeconds += 1;
-  if (timerSeconds >= maxTimerValue) {
-    timerMinutes = Math.min(timerMinutes + 1, maxTimerValue);
-    timerSeconds = 0;
+  checkBlock(blockPosition);
+  if (clearedBlocks.size == minesweeperSize ** 2 - mineNum) {
+    winGame();
   }
+}
+function defuseBlock(blockPosition, block) {
+  if (clearedBlocks.has(JSON.stringify(blockPosition))) return;
+  block.classList.toggle("defused");
+}
+function highlightBlock(blockPosition, block) {
+  if (gameOver) return;
+  if (clearedBlocks.has(JSON.stringify(blockPosition))) return;
+  if (block.classList.contains("defused")) return;
+  block.classList.add("minesweeper_clicked");
+  face.classList.add("clicked");
+  block.addEventListener(
+    "pointerup",
+    () => {
+      block.classList.remove("minesweeper_clicked");
+      face.classList.remove("clicked");
+    },
+    { once: true },
+  );
+}
+function generateMinesweeper() {
+  squaresClicked = 0;
+  minesGrid = [];
+  blockGrid = [];
+  mineNumGrid = [];
+  firstClick = [];
+  clearedBlocks = new Set();
+  gameOver = false;
+  const minesweeperDiv = document.getElementById("minesweeper_game");
+  minesweeperDiv.innerHTML = null;
+  face = document.getElementById("minesweeper_face");
+  face.className = "";
+  face.addEventListener("click", generateMinesweeper);
 
-  let secondsString = String(timerSeconds);
-  if (timerSeconds < 10) {
-    secondsString = "0" + secondsString;
-  }
+  for (let i = 0; i < minesweeperSize; i++) {
+    let currMinesRow = [];
+    let currBlockRow = [];
+    let currMineNumRow = [];
+    for (let j = 0; j < minesweeperSize; j++) {
+      const currBlock = document.createElement("div");
+      currBlock.classList.add("minesweeper_new");
+      minesweeperDiv.appendChild(currBlock);
+      currBlock.addEventListener("click", () => {
+        clickBlock([i, j]);
+      });
+      currBlock.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        defuseBlock([i, j], currBlock);
+      });
+      currBlock.addEventListener("pointerdown", (event) => {
+        if (event.button != 0) return;
+        highlightBlock([i, j], currBlock);
+      });
 
-  let minutesString = String(timerMinutes);
-  if (timerMinutes < 10) {
-    minutesString = "0" + minutesString;
+      currMinesRow.push(false);
+      currBlockRow.push(currBlock);
+      currMineNumRow.push(0);
+    }
+    minesGrid.push(currMinesRow);
+    blockGrid.push(currBlockRow);
+    mineNumGrid.push(currMineNumRow);
   }
-
-  if (timerMinutes == maxTimerValue) {
-    secondsContainer.innerHTML = "00";
-    minutesContainer.innerHTML == "60";
-    timerContainer.classList.toggle("red");
-  }
-
-  secondsContainer.innerHTML = secondsString;
-  minutesContainer.innerHTML = minutesString;
-}, 1000);
+}
 
 console.log("If you are reading this follow me :)");
