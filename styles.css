@@ -580,7 +580,7 @@ template {
 
     #minesweeper_face {
         background-image: url("assets/face_normal.png");
-        background-size: 100%;
+        background-size: 80%;
         background-repeat: no-repeat;
         background-position: center;
         border-top: 4px solid white;
@@ -588,11 +588,13 @@ template {
         border-right: 4px solid var(--dark-grey);
         border-bottom: 4px solid var(--dark-grey);
 
-        height: 100%;
+        height: 50px;
+        width: 50px;
         aspect-ratio: 1/1;
     }
 
     #minesweeper_face:active {
+        background-size: 70%;
         border-top: 2px solid var(--dark-grey);
         border-left: 2px solid var(--dark-grey);
         border-right: none;

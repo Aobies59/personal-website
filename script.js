@@ -650,23 +650,7 @@ function highlightBlock(blockPosition, block) {
     { once: true },
   );
 }
-function preloadImages() {
-  const images = [
-    "assets/bomb.png",
-    "assets/bomb_defused.png",
-    "assets/face_dead.png",
-    "assets/face_normal.png",
-    "assets/face_surprised.png",
-    "assets/face_victory",
-    "flag.png",
-  ];
-  images.forEach((currImage) => {
-    const img = new Image();
-    img.src = currImage;
-  });
-}
 function generateMinesweeper() {
-  setTimeout(preloadImages);
   squaresClicked = 0;
   minesGrid = [];
   blockGrid = [];
