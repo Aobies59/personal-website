@@ -14,6 +14,7 @@ function selectStartBarButton(button) {
   if (window != null) {
     if (window.classList.contains(highlightedWindowClassName)) {
       deHighlightWindow();
+      window.style.display = "none";
     } else {
       highlightWindow(window);
     }
@@ -78,6 +79,7 @@ let previouslyHighlightedWindow = null;
 let highlightedWindowFooterButton = null;
 const highlightedWindowClassName = "window-active";
 function highlightWindow(window) {
+  window.style.display = "initial";
   window.classList.add(highlightedWindowClassName);
   window.style.zIndex = 5;
   if (highlightedWindowFooterButton != null) {
