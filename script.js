@@ -605,6 +605,10 @@ function checkBlock(blockPosition) {
       block.classList.add("minesweeper_empty");
       const mineNum = mineNumGrid[currBlockPosition[0]][currBlockPosition[1]];
       if (mineNum == 0) {
+        blocksToCheck.push([currBlockPosition[0] - 1, currBlockPosition[1] - 1])
+        blocksToCheck.push([currBlockPosition[0] - 1, currBlockPosition[1] + 1])
+        blocksToCheck.push([currBlockPosition[0] + 1, currBlockPosition[1] - 1]);
+        blocksToCheck.push([currBlockPosition[0] + 1, currBlockPosition[1] + 1])
         blocksToCheck.push([currBlockPosition[0] - 1, currBlockPosition[1]]);
         blocksToCheck.push([currBlockPosition[0] + 1, currBlockPosition[1]]);
         blocksToCheck.push([currBlockPosition[0], currBlockPosition[1] - 1]);
