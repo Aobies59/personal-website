@@ -20,6 +20,10 @@
                 <img draggable="false" src="assets/minesweeper.png" />
                 <span>Mine</span>
             </div>
+            <div class="desktop_icon" data-window="paint">
+                <img draggable="false" src="assets/Paint.ico" />
+                <span>Paint</span>
+            </div>
         </div>
 
         <footer>
@@ -99,6 +103,20 @@
                     <div id="minesweeper_score"></div>
                 </div>
                 <div id="minesweeper_game"></div>
+            </div>
+            <div
+                id="paint"
+                data-windowsize="big"
+                data-title="Paint"
+                data-left="30%"
+                data-top="20%"
+            >
+                <div id="paint_toolbar">
+                    <div id="paint_toolbar_pencil" class="bordered"></div>
+                    <div id="paint_toolbar_eraser" class="bordered"></div>
+                    <div id="paint_toolbar_clear" class="bordered"></div>
+                </div>
+                <div id="paint_canvas" class="pen"></div>
             </div>
         </template>
 

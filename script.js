@@ -151,6 +151,7 @@ function selectWindow(window) {
 const windowFunctions = {
   timer: startTimer,
   minesweeper: generateMinesweeper,
+  paint: generatePaint
 };
 function createWindow(
   windowId,
@@ -697,6 +698,63 @@ function generateMinesweeper() {
     minesGrid.push(currMinesRow);
     blockGrid.push(currBlockRow);
     mineNumGrid.push(currMineNumRow);
+  }
+}
+
+/* paint */
+let paintCanvas =  null;
+let pencilButton = null;
+let eraserButton = null;
+let clearButton = null;
+let drawing = false;
+let usingPen = true;
+const penClassName = "pen";
+const eraserClassName = "eraser";
+const paintedClassName = "painted";
+const canvasSize = 150;
+function generatePaint() {
+  paintCanvas = document.getElementById("paint_canvas");
+  pencilButton = document.getElementById("paint_toolbar_pencil");
+  eraserButton = document.getElementById("paint_toolbar_eraser");
+  clearButton = document.getElementById("paint_toolbar_clear");
+
+  pencilButton.addEventListener("click", () => {
+    paintCanvas.classList.remove(eraserClassName);
+    paintCanvas.classList.add(penClassName);
+    usingPen = true;
+  })
+
+  eraserButton.addEventListener("click", () => {
+    paintCanvas.classList.remove(penClassName);
+    paintCanvas.classList.add(eraserClassName);
+    usingPen = false;
+  })
+  
+  clearButton.addEventListener("click", () => {
+    Array.from(paintCanvas.children).forEach((currPixel) => {
+      currPixel.classList.remove(paintedClassName);
+    })
+  })
+
+  paintCanvas.addEventListener("pointerdown", () => {
+    drawing = true;
+  })
+
+  document.addEventListener("pointerup", () => {
+    drawing = false;
+  })
+
+  for (let i=0; i<canvasSize**2; i++) {
+    const currPixel = document.createElement("div");
+    currPixel.addEventListener("mouseover", () => {
+      if (!drawing) return;
+      if (usingPen) {
+        currPixel.classList.add(paintedClassName);
+      } else {
+        currPixel.classList.remove(paintedClassName);
+      }
+    })
+    paintCanvas.appendChild(currPixel);
   }
 }
 
