@@ -14,6 +14,8 @@ function selectStartBarButton(button) {
   if (window != null) {
     if (window.classList.contains(highlightedWindowClassName)) {
       deHighlightWindow();
+      if (previouslyHighlightedWindow != null && previouslyHighlightedWindow.style.display != "none")
+        highlightWindow(previouslyHighlightedWindow);
       window.style.display = "none";
     } else {
       highlightWindow(window);
