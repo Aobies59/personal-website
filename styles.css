@@ -336,6 +336,7 @@ body {
 
 .window-text {
     height: min-content;
+    width: min-content;
 
     p {
         width: 300px;
@@ -345,6 +346,10 @@ body {
     .content {
         height: max-content;
     }
+}
+
+#welcome > .content{
+    width: 300px;
 }
 
 /* FOOTER */
@@ -712,4 +717,90 @@ template {
 
 #paint_canvas.eraser {
     cursor: url("assets/eraser.png") 0 10, auto;
+}
+
+#stretches > .content{
+    gap: 5px;
+
+    display: grid;
+    grid-template-columns: 200px;
+    grid-template-rows: repeat(6, 100px);
+
+    > * {
+        grid-column: 1;
+    }
+
+    > .stretches_container {
+        padding: 5px;
+
+        border-top: 4px solid white;
+        border-left: 4px solid white;
+        border-bottom: 4px solid var(--dark-grey);
+        border-right: 4px solid var(--dark-grey);
+
+        display: grid;
+        grid-template-rows: 20px calc(100% - 20px);
+        grid-template-columns: 100%;
+
+        > * {
+            grid-column: 1;
+        }
+
+        > .stretches_title {
+            font-size: 15px;
+        }
+
+        >.stretches_content {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            
+            > * {
+                grid-row: 1;
+                height: 100%;
+            }
+
+            > .stretches_image {
+                flex-grow: 0;
+                aspect-ratio: 1/1;
+            }
+
+            > .stretches_timer {
+                border-top: 4px solid white;
+                border-left: 4px solid white;
+                border-bottom: 4px solid var(--dark-grey);
+                border-right: 4px solid var(--dark-grey);
+
+                flex-grow: 1;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                font-size: 30px;
+            }
+
+            > .stretches_timer.clickable {
+                cursor: pointer;
+            }
+
+            > .stretches_timer.active {
+                border-bottom: 4px solid white;
+                border-right: 4px solid white;
+                border-top: 4px solid var(--dark-grey);
+                border-left: 4px solid var(--dark-grey);
+            }
+
+            > .stretches_timer.inactive {
+                border-bottom: 4px solid white;
+                border-right: 4px solid white;
+                border-top: 4px solid var(--dark-grey);
+                border-left: 4px solid var(--dark-grey);
+
+                cursor: default;
+
+                color: var(--dark-grey);
+            }
+        }
+    }
 }

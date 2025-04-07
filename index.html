@@ -24,6 +24,10 @@
                 <img draggable="false" src="assets/Paint.ico" />
                 <span>Paint</span>
             </div>
+            <div class="desktop_icon" data-window="stretches">
+                <img draggable="false" src="assets/document.ico" />
+                <span>Stretches</span>
+            </div>
         </div>
 
         <footer>
@@ -79,7 +83,8 @@
                 &check; Minesweeper<br />
                 - Minesweeper timer and score<br />
                 &check; Paint<br />
-                - Better cursor detection in paint
+                - Better cursor detection in paint<br />
+                - Neck stretches timer
             </div>
             <div
                 id="timer"
@@ -120,13 +125,75 @@
                 </div>
                 <div id="paint_canvas" class="pen"></div>
             </div>
+            <div 
+                id="stretches"
+                data-windowsize="text"
+                data-title="Stretches"
+                data-left="20%"
+                data-top="10%"
+            >
+                <div class="stretches_container">
+                    <span class="stretches_title">Rotation - left</span>
+                    <div class="stretches_content">
+                        <img class="stretches_image" src="assets/face_large.png">
+                        <div class="stretches_timer">
+                            <span class="stretches_timer_minutes">1</span>:<span class="stretches_timer_seconds">00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stretches_container">
+                    <span class="stretches_title">Rotation - right</span>
+                    <div class="stretches_content">
+                        <img class="stretches_image" src="assets/face_large.png">
+                        <div class="stretches_timer">
+                            <span class="stretches_timer_minutes">1</span>:<span class="stretches_timer_seconds">00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stretches_container">
+                    <span class="stretches_title">Stretch - left</span>
+                    <div class="stretches_content">
+                        <img class="stretches_image" src="assets/face_large.png">
+                        <div class="stretches_timer">
+                            <span class="stretches_timer_minutes">1</span>:<span class="stretches_timer_seconds">00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stretches_container">
+                    <span class="stretches_title">Stretch - right</span>
+                    <div class="stretches_content">
+                        <img class="stretches_image" src="assets/face_large.png">
+                        <div class="stretches_timer">
+                            <span class="stretches_timer_minutes">1</span>:<span class="stretches_timer_seconds">00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stretches_container">
+                    <span class="stretches_title">Stretch - up</span>
+                    <div class="stretches_content">
+                        <img class="stretches_image" src="assets/face_large.png">
+                        <div class="stretches_timer">
+                            <span class="stretches_timer_minutes">1</span>:<span class="stretches_timer_seconds">00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stretches_container">
+                    <span class="stretches_title">Stretch - down</span>
+                    <div class="stretches_content">
+                        <img class="stretches_image" src="assets/face_large.png">
+                        <div class="stretches_timer">
+                            <span class="stretches_timer_minutes">1</span>:<span class="stretches_timer_seconds">00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </template>
 
         <script src="script.js"></script>
         <link rel="preload" href="assets/bomb_defused.png" as="image"/>
         <link rel="preload" href="assets/bomb.png" as="image"/>
         <link rel="preload" href="assets/face_dead.png" as="image"/>
-        <link rel="preload" href="assets/face_normal.png" as="image"/>
+        <link rel="preload" href="assets/face_large.png" as="image"/>
         <link rel="preload" href="assets/face_surprised.png" as="image"/>
         <link rel="preload" href="assets/face_victory.png" as="image"/>
         <link rel="preload" href="assets/flag.png" as="image"/>

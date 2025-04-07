@@ -153,7 +153,8 @@ function selectWindow(window) {
 const windowFunctions = {
   timer: startTimer,
   minesweeper: generateMinesweeper,
-  paint: generatePaint
+  paint: generatePaint,
+  stretches: generateStretches
 };
 function createWindow(
   windowId,
@@ -766,6 +767,82 @@ function generatePaint() {
     })
     currPixel.appendChild(currDetectionArea);
     paintCanvas.appendChild(currPixel);
+  }
+}
+
+// stretches
+let stretchTimers = [];
+let stretchTimerIndex = 0;
+
+const stretchDuration = 1;
+let currTimerSecondsContainer = null;
+let currTimerSeconds = 0;
+let currTimerMinutesContainer = null;
+let currTimerMinutes = stretchDuration;
+
+let timerRunning = false;
+let firstTime = true;
+
+const activeTimerClassName = "active";
+const inactiveTimerClassName = "inactive";
+const clickableTimerClassName = "clickable";
+
+function countDown() {
+  if (!timerRunning) return;
+  if (currTimerMinutesContainer == null || currTimerSecondsContainer == null) return;
+  currTimerSeconds -= 1;
+  if (currTimerSeconds < 0) {
+    currTimerMinutes -= 1;
+    currTimerSeconds = 59;
+    if (currTimerMinutes < 0) {
+      currTimerMinutesContainer.innerHTML = "0";
+      currTimerSecondsContainer.innerHTML = "00";
+      switchTimer();
+      return;
+    }
+  }
+  currTimerMinutesContainer.innerHTML = currTimerMinutes;
+  if (currTimerSeconds < 10) {
+    currTimerSecondsContainer.innerHTML = "0" + currTimerSeconds;
+  } else {
+    currTimerSecondsContainer.innerHTML = currTimerSeconds;
+  }
+}
+function toggleTimer() {
+  stretchTimers[stretchTimerIndex].classList.toggle("active");
+  timerRunning = !timerRunning;
+}
+function switchTimer() {
+  timerRunning = false;
+  const previousTimer = stretchTimers[stretchTimerIndex];
+  previousTimer.classList.remove("clickable");
+  previousTimer.classList.remove("active");
+  previousTimer.classList.add("inactive");
+
+  stretchTimerIndex += 1;
+  const currTimer = stretchTimers[stretchTimerIndex];
+  currTimer.classList.add("clickable");
+  currTimer.classList.add("active");
+  currTimerMinutesContainer = currTimer.querySelector(".stretches_timer_minutes");
+  currTimerMinutes = stretchDuration;
+  currTimerSecondsContainer = currTimer.querySelector(".stretches_timer_seconds");
+  currTimerSeconds = 0;
+  currTimer.addEventListener("click", toggleTimer);
+  timerRunning = true;
+}
+function generateStretches() {
+  stretchTimers = Array.from(document.getElementsByClassName("stretches_timer"));
+  stretchTimerIndex = 0;
+  currTimerMinutes = stretchDuration;
+  currTimerSeconds = 0;
+  const currTimer = stretchTimers[stretchTimerIndex];
+  currTimer.classList.add("clickable");
+  currTimer.addEventListener("click", toggleTimer);
+  currTimerMinutesContainer = currTimer.querySelector(".stretches_timer_minutes");
+  currTimerSecondsContainer = currTimer.querySelector(".stretches_timer_seconds");
+  if (firstTime) {
+    setInterval(countDown, 1000);
+    firstTime = false;
   }
 }
 
