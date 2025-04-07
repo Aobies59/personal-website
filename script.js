@@ -61,19 +61,24 @@ desktop.addEventListener("pointerdown", (event) => {
   usingSelector = true;
 });
 
-function closeWindow(window) {
+const windowCloseFunctions = {
+  stretches: stopStretchTimer
+}
+function closeWindow(windowToClose) {
   for (let i = 0; i < footerButtons.length; i++) {
     const currButton = footerButtons[i];
-    if (currButton.dataset.window == window.id) {
+    if (currButton.dataset.window == windowToClose.id) {
       currButton.remove();
       updateFooterButtonsList();
       break;
     }
   }
-  if (window.dataset.desktopicon) {
-    desktopWindows[window.id] = false;
+  if (windowToClose.dataset.desktopicon) {
+    desktopWindows[windowToClose.id] = false;
   }
-  window.remove();
+  const windowCloseFunction = windowCloseFunctions[windowToClose.id];
+  if (windowCloseFunction != null) windowCloseFunction();
+  windowToClose.remove();
 }
 
 let highlightedWindow = null;
@@ -787,6 +792,13 @@ const activeTimerClassName = "active";
 const inactiveTimerClassName = "inactive";
 const clickableTimerClassName = "clickable";
 
+let stretchInterval = null;
+
+const stretchNotificationAudio = new Audio("assets/ding.flac");
+
+function stopStretchTimer() {
+  clearInterval(stretchInterval);
+}
 function countDown() {
   if (!timerRunning) return;
   if (currTimerMinutesContainer == null || currTimerSecondsContainer == null) return;
@@ -813,6 +825,7 @@ function toggleTimer() {
   timerRunning = !timerRunning;
 }
 function switchTimer() {
+  stretchNotificationAudio.play();
   timerRunning = false;
   const previousTimer = stretchTimers[stretchTimerIndex];
   previousTimer.classList.remove("clickable");
@@ -821,6 +834,9 @@ function switchTimer() {
 
   stretchTimerIndex += 1;
   const currTimer = stretchTimers[stretchTimerIndex];
+  if (currTimer == null) {
+    return;
+  }
   currTimer.classList.add("clickable");
   currTimer.classList.add("active");
   currTimerMinutesContainer = currTimer.querySelector(".stretches_timer_minutes");
@@ -835,15 +851,14 @@ function generateStretches() {
   stretchTimerIndex = 0;
   currTimerMinutes = stretchDuration;
   currTimerSeconds = 0;
+  timerRunning = false;
   const currTimer = stretchTimers[stretchTimerIndex];
   currTimer.classList.add("clickable");
   currTimer.addEventListener("click", toggleTimer);
   currTimerMinutesContainer = currTimer.querySelector(".stretches_timer_minutes");
   currTimerSecondsContainer = currTimer.querySelector(".stretches_timer_seconds");
-  if (firstTime) {
-    setInterval(countDown, 1000);
-    firstTime = false;
-  }
+
+  stretchInterval = setInterval(countDown, 1000);
 }
 
 console.log("If you are reading this follow me :)");
