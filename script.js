@@ -748,7 +748,8 @@ function generatePaint() {
 
   for (let i=0; i<canvasSize**2; i++) {
     const currPixel = document.createElement("div");
-    currPixel.addEventListener("mouseover", () => {
+    const currDetectionArea = document.createElement("div");
+    currDetectionArea.addEventListener("mouseover", () => {
       if (!drawing) return;
       if (usingPen) {
         currPixel.classList.add(paintedClassName);
@@ -756,6 +757,7 @@ function generatePaint() {
         currPixel.classList.remove(paintedClassName);
       }
     })
+    currPixel.appendChild(currDetectionArea);
     paintCanvas.appendChild(currPixel);
   }
 }

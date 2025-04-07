@@ -690,6 +690,17 @@ template {
     grid-template-columns: repeat(var(--paint-size), 1fr);
     grid-template-rows: repeat(var(--paint-size), 1fr);
 
+    > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        > div {
+            width: 200%;
+            height: 200%;
+        }
+    }
+
     > .painted {
         background-color: black;
     }
@@ -700,5 +711,5 @@ template {
 }
 
 #paint_canvas.eraser {
-    cursor: url("assets/eraser.png") 0 15, auto;
+    cursor: url("assets/eraser.png") 0 10, auto;
 }
