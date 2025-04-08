@@ -62,7 +62,8 @@ desktop.addEventListener("pointerdown", (event) => {
 });
 
 const windowCloseFunctions = {
-  stretches: stopStretchTimer
+  stretches: stopStretchTimer,
+  minesweeper: resetMinesweeper
 }
 function closeWindow(windowToClose) {
   for (let i = 0; i < footerButtons.length; i++) {
@@ -525,9 +526,20 @@ let firstClick = true;
 let clearedBlocks = new Set();
 let face = null;
 
+let minesweeperTimerImages = [];
+let timerContent = 0;
+let minesweeperCountImages = [];
+let mineCountContent = mineNum;
+let minesweeperTimerInterval = null;
+const minesweeperImageName = "assets/minesweeper-numbers/"
+
+function stopMinesweeperTimer() {
+  clearInterval(minesweeperTimerInterval);
+}
 let gameOver = false;
 function loseGame() {
   face.classList.add("dead");
+  stopMinesweeperTimer();
   gameOver = true;
   for (let i = 0; i < minesweeperSize; i++) {
     for (let j = 0; j < minesweeperSize; j++) {
@@ -544,6 +556,7 @@ function loseGame() {
 }
 function winGame() {
   face.classList.add("victory");
+  stopMinesweeperTimer();
   gameOver = true;
   for (let i = 0; i < minesweeperSize; i++) {
     for (let j = 0; j < minesweeperSize; j++) {
@@ -649,6 +662,8 @@ function clickBlock(blockPosition) {
 function defuseBlock(blockPosition, block) {
   if (clearedBlocks.has(JSON.stringify(blockPosition))) return;
   block.classList.toggle("defused");
+  mineCountContent -= 1;
+  updateMinesweeperScore();
 }
 function highlightBlock(blockPosition, block) {
   if (gameOver) return;
@@ -665,6 +680,58 @@ function highlightBlock(blockPosition, block) {
     { once: true },
   );
 }
+function resetMinesweeper() {
+  minesweeperTimerImages.forEach((currImg) => {
+    currImg.src = "assets/minesweeper-numbers/0.png";
+  })
+  mineCountContent = mineNum;
+  updateMinesweeperScore();
+  stopMinesweeperTimer();
+  timerContent = 0;
+}
+function updateMinesweeperScore(){
+  let scoreValues = [0, 0, 0];
+  if (mineCountContent < 0) {
+    scoreValues[0] = "-";
+    if (mineCountContent > -10) {
+      scoreValues[2] = -mineCountContent;
+    } else {
+      scoreValues[1] = Math.floor(mineCountContent / -10);
+      scoreValues[2] = -mineCountContent - 10 * scoreValues[1];
+    }
+  } else {
+    if (mineCountContent < 10) {
+      scoreValues[2] = mineCountContent;
+    } else if (mineCountContent < 100) {
+      scoreValues[1] = Math.floor(mineCountContent / 10);
+      scoreValues[2] = mineCountContent - 10 * scoreValues[1];
+    } else {
+      scoreValues[0] = Math.floor(mineCountContent / 100);
+      scoreValues[1] = Math.floor((mineCountContent - 100 * scoreValues[1]) / 10);
+      scoreValues[2] = mineCountContent - 100 * scoreValues[0] - 10 * scoreValues[1];
+    }
+  }
+  for (let i = 0; i < 3; i++) {
+    minesweeperCountImages[i].src = "assets/minesweeper-numbers/" + scoreValues[i] + ".png";
+  }
+}
+function updateMinesweeperTimer(){
+  timerContent = Math.min(999, timerContent + 1);
+  let timerValues = [0, 0, 0];
+  if (timerContent < 10) {
+    timerValues[2] = timerContent;
+  } else if (timerContent < 100) {
+    timerValues[1] = Math.floor(timerContent / 10);
+    timerValues[2] = Math.floor(timerContent % 10);
+  } else {
+    timerValues[0] = Math.floor(timerContent / 100);
+    timerValues[1] = Math.floor((timerContent - 100 * timerValues[0]) / 10);
+    timerValues[2] = Math.floor((timerContent - 100 * timerValues[0] - 10 * timerValues[1]));
+  }
+  for (let i = 0; i < 3; i++) {
+    minesweeperTimerImages[i].src = "assets/minesweeper-numbers/" + timerValues[i] + ".png";
+  }
+}
 function generateMinesweeper() {
   squaresClicked = 0;
   minesGrid = [];
@@ -678,6 +745,12 @@ function generateMinesweeper() {
   face = document.getElementById("minesweeper_face");
   face.className = "";
   face.addEventListener("click", generateMinesweeper);
+
+  timerContainer = document.getElementById("minesweeper_timer");
+  minesweeperTimerImages = Array.from(document.getElementById("minesweeper_timer").querySelectorAll("img"));
+  minesweeperCountImages = Array.from(document.getElementById("minesweeper_score").querySelectorAll("img"));
+  resetMinesweeper();
+  minesweeperTimerInterval = setInterval(updateMinesweeperTimer, 1000);
 
   for (let i = 0; i < minesweeperSize; i++) {
     let currMinesRow = [];
