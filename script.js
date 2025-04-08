@@ -661,8 +661,12 @@ function clickBlock(blockPosition) {
 }
 function defuseBlock(blockPosition, block) {
   if (clearedBlocks.has(JSON.stringify(blockPosition))) return;
+  if (block.classList.contains("defused")) {
+    mineCountContent += 1;
+  } else {
+    mineCountContent -= 1;
+  }
   block.classList.toggle("defused");
-  mineCountContent -= 1;
   updateMinesweeperScore();
 }
 function highlightBlock(blockPosition, block) {
