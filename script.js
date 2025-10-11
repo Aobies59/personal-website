@@ -1,3 +1,12 @@
+window.addEventListener("load", checkForMobileSite);
+window.addEventListener("resize", checkForMobileSite);
+
+function checkForMobileSite() {
+  if (window.innerWidth <= 600) {
+    window.location = "mobile/index.html";
+  }
+}
+
 const footer = document.querySelector("footer");
 let footerButtons = Array.from(footer.querySelectorAll("div"));
 const desktop = document.getElementById("desktop");
@@ -871,7 +880,7 @@ const clickableTimerClassName = "clickable";
 
 let stretchInterval = null;
 
-const stretchNotificationAudio = new Audio("assets/ding.flac");
+const stretchNotificationAudio = new Audio("assets/ding.mp3");
 
 function stopStretchTimer() {
   clearInterval(stretchInterval);
