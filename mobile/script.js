@@ -176,6 +176,3 @@ stretchesElem.addEventListener("close", () => {
   })
 })
 
-// temp 
-openApp("Stretches");
-
