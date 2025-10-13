@@ -63,7 +63,6 @@ function hasBrightBackground(elem) {
 }
 
 // STRETCHES
-// TODO: play and pause icons 
 
 let stretchTimerIndex;
 let currTimerMinutes;
@@ -74,6 +73,14 @@ let stretchInterval;
 let stretchTimers;
 const stretchesElem = document.querySelector("template").content.getElementById("stretches");
 const stretchNotificationAudio = new Audio("assets/ding.mp3");
+const TimerState = {
+  PAUSED: 0,
+  RUNNING: 1,
+  INACTIVE: 2
+}
+const playImg = "assets/play.png";
+const playActiveImg = "assets/play_active.png";
+const pauseImg = "assets/pause_active.png";
 
 stretchesElem.addEventListener("open", () => {
   stretchTimers = Array.from(document.getElementsByClassName("timer"));
@@ -82,7 +89,6 @@ stretchesElem.addEventListener("open", () => {
   currTimerSeconds = 0;
   timerRunning = false;
   const currTimer = stretchTimers[stretchTimerIndex];
-  currTimer.classList.add("clickable");
   const currTimerButton = currTimer.querySelector("button");
   currTimerButton.addEventListener("click", toggleTimer);
   currTimerTextElem = currTimer.querySelector(".timer_time");
@@ -90,7 +96,12 @@ stretchesElem.addEventListener("open", () => {
 })
 
 function toggleTimer() {
-  stretchTimers[stretchTimerIndex].classList.toggle("active");
+  const currTimer = stretchTimers[stretchTimerIndex];
+  if (timerRunning) {
+    changeTimerState(currTimer, TimerState.PAUSED);
+  } else {
+    changeTimerState(currTimer, TimerState.RUNNING);
+  }
   timerRunning = !timerRunning;
 }
 
@@ -100,9 +111,9 @@ function switchTimer() {
   currTimerMinutes = 1;
   currTimerSeconds = 0;
   const previousTimer = stretchTimers[stretchTimerIndex];
-  previousTimer.classList.remove("clickable");
-  previousTimer.classList.remove("active");
-  previousTimer.classList.add("inactive");
+  const previousTimerButton = previousTimer.querySelector("button");
+  previousTimerButton.removeEventListener("click", toggleTimer);
+  changeTimerState(previousTimer, TimerState.INACTIVE);
 
   stretchTimerIndex += 1;
   const currTimer = stretchTimers[stretchTimerIndex];
@@ -111,8 +122,7 @@ function switchTimer() {
     return;
   }
   currTimerTextElem = currTimer.querySelector(".timer_time");
-  currTimer.classList.add("clickable");
-  currTimer.classList.add("active");
+  changeTimerState(currTimer, TimerState.RUNNING);
   currTimerTextElem.innerText = "1:00";;
   const currTimerButton = currTimer.querySelector("button");
   currTimerButton.addEventListener("click", toggleTimer);
@@ -137,6 +147,26 @@ function countDown() {
     secondsText = "0" + secondsText;
   }
   currTimerTextElem.innerText = "" + currTimerMinutes + ":" + secondsText;
+}
+
+function changeTimerState(timerElem, newState) {
+  const timerButton = timerElem.querySelector("button");
+  const buttonImage = timerButton.querySelector("img");
+
+  if (newState == TimerState.PAUSED) {
+    timerButton.classList.add("active");
+    timerButton.classList.add("paused");
+    buttonImage.src = playActiveImg;
+  } else if (newState == TimerState.RUNNING) {
+    timerButton.classList.add("active");
+    timerButton.classList.remove("paused");
+    buttonImage.src = pauseImg;
+  } else if (newState == TimerState.INACTIVE) {
+    timerButton.classList.remove("active")
+    timerButton.classList.remove("paused");
+    timerButton.classList.add("inactive");
+    buttonImage.src = playImg;
+  }
 }
 
 stretchesElem.addEventListener("close", () => {

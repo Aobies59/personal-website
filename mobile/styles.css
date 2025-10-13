@@ -1,7 +1,13 @@
+@font-face {
+  font-family: sf-pro;
+  src: url(assets/sf-pro-fonts/regular.OTF);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: sf-pro;
 }
 
 :root {
@@ -60,7 +66,7 @@ body {
   white-space: nowrap;
   color: white;
   text-align: center;
-  font-size: 15px;
+  font-size: 13px;
 
   position: absolute;
   bottom: 0;
@@ -141,13 +147,13 @@ footer {
 .timer>.timer_time {
   grid-column: 1;
   grid-row: 1;
-  font-size: 50px;
+  font-size: 45px;
 }
 
 .timer>.timer_name {
   grid-column: 1;
   grid-row: 2;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .timer>button {
@@ -163,12 +169,20 @@ footer {
   cursor: pointer;
 
   >img {
-    margin-left: 7px;
     width: 40px;
     aspect-ratio: 1/1;
     justify-self: center;
     align-self: center;
   }
+}
+
+.timer>button.active {
+  background-color: black;
+  border: 5px solid orange;
+}
+
+.timer>button.inactive {
+  background-color: gray;
 }
 
 .timer>button.paused {
