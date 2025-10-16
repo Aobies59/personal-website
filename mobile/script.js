@@ -173,6 +173,11 @@ stretchesElem.addEventListener("close", () => {
   clearInterval(stretchInterval);
   stretchTimers.forEach(currTimer => {
     currTimer.querySelector(".timer_time").innerText = "1:00";
+    const currTimerButton = currTimer.querySelector("button");
+    currTimerButton.classList.remove("inactive");
+    currTimerButton.classList.remove("paused");
+    currTimerButton.classList.remove("active");
+    currTimer.querySelector("img").src = playImg;
   })
 })
 
