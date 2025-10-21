@@ -1,12 +1,3 @@
-window.addEventListener("load", checkForMobileSite);
-window.addEventListener("resize", checkForMobileSite);
-
-function checkForMobileSite() {
-  if (window.innerWidth <= 600) {
-    window.location = "mobile/index.html";
-  }
-}
-
 const footer = document.querySelector("footer");
 let footerButtons = Array.from(footer.querySelectorAll("div"));
 const desktop = document.getElementById("desktop");
