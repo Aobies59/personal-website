@@ -64,6 +64,16 @@ function hasBrightBackground(elem) {
 
 // STRETCHES
 
+let wakeLock = null;
+async function requestWaylock() {
+  wakeLock = await navigator.wakeLock.request("screen")
+  document.addEventListener("visibilitychange", async () => {
+    if (wakeLock !== null && document.visibilityState === "visible") {
+      wakeLock = await navigator.wakeLock.request("screen");
+    }
+  });
+}
+
 let stretchTimerIndex;
 let currTimerMinutes;
 let stretchDuration;
@@ -101,6 +111,7 @@ function toggleTimer() {
     changeTimerState(currTimer, TimerState.PAUSED);
   } else {
     changeTimerState(currTimer, TimerState.RUNNING);
+    requestWaylock();
   }
   timerRunning = !timerRunning;
 }
@@ -118,6 +129,8 @@ function switchTimer() {
   stretchTimerIndex += 1;
   const currTimer = stretchTimers[stretchTimerIndex];
   if (currTimer == null) {
+    wakeLock.release();
+    wakeLock = null;
     clearInterval(stretchInterval);
     return;
   }
